@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Матанализ: тренажёр</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAIAAABt+uBvAAAC5klEQVR42u2cTW4TQRBGv6rueImEIsEl7LGJlADiKnAALsB9WHCSyBYom2SFWEQIifEP4gCxEnWxmGSSzEzGY2wirPqeImsSeZOnquru6u4BCCGEEEIIIYQQQjqhquUnabZTfyYAEGMEkGXZ8fHxYDAo/0Ju7QwGgzzPzSzPczpqsDObzcxsuVya2Ww26/f7dFS1c3V1VX7S0XUlzrLsrp2C0pHfXFNVETk4OJhOpxU7dx3N53OnjlS11+udnp6WdaeOa0crI6jiKMsyj44eqkGMo7ZRjI6a59AdHXnMtdLRfD5nHDHXHiXXnM4h18o114465prT9dq6uebaUcdc8+to3Vzz1atdK9fyPB+NRiLi1FF7rhX9gLOzs16v567hvzKOyiw7PDx0F0ErHZVz6+FwCM/7RY25VrHDDv+9OCrqDu00Oyr6kNPptNGOABEIQAAiIA4dDYfD8Xg8Go3qdm6LkAhECz/brUz/u3FVTSnVnwsRCfJE5a3qGzOFfBZ8Sul3MoUlP3HUeA6k+KUf4tcYTdUAA0z1e4xHIQDia4QTkUrYC/BUw7cYDbIELoFLYAkY8DOE5xrEWz26V5sAAO/DnqlcAOnOzxIwkQ8xll/bNH53UZABgLwUWDKt/T9mOILdfM2loA4Ct5ZhOylIAMBOYKJSGa0SICpfIIA5qkGNRXo/xPO9PRNc3BTpi5si/cxVkW4Z5l+EeH5/mP8R46sQt5gaOz9R3Fd5p/raTIATkY/JfqXkZaJYLjUmk0nbUkMEEiDhXyw1dmmx2rhV73SxynZHJzv1htlisfDuqEvLtahHbEi3Hff02LTnts9GseN64/DvtudphweFaGeLdtwdVqSdbdrxdWCasUM7zCzGzmNTXoeinWY7vFC3QhCvZG4UQd4v9aLDtXCn1+fqo9hDLxbgCyoaHJV7FbTTMBsqXm7y0G4XHV0fzeQ+V1vNrj+TqiPaaaNy6ocQQgghhBBCCCGd+AP7SbAS8A0EhwAAAABJRU5ErkJggg==">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#000000;
+  --s1:#141414;
+  --s2:#1f1f1f;
+  --line:#2a2a2a;
+  --text:#ececec;
+  --muted:#9b9b9b;
+  --red:#ff0000;
+  --red-text:#ff4d4d;
+  --ok:#46c873;
+  --font:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:#000;border-bottom:1px solid var(--line)}
+.top-in{max-width:760px;margin:0 auto;height:56px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.01em}
+.brand img{display:block;height:28px;width:auto}
+.seg{display:flex;gap:2px;background:var(--s1);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{appearance:none;background:none;border:0;color:var(--muted);font-size:15px;font-weight:500;padding:7px 14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.seg button[aria-selected="true"]{color:var(--text);background:var(--s2)}
+.seg button[aria-selected="true"]::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 72px}
+body[data-view="practice"] #theory, body[data-view="theory"] #practice{display:none}
+
+.warn{max-width:760px;margin:12px auto 0;padding:10px 16px;color:var(--muted);font-size:14px;border-left:2px solid var(--red)}
+.katex{white-space:nowrap}
+code.tex{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;color:#d0d0d0}
+
+/* practice home */
+.intro h1{font-size:clamp(30px,7vw,42px);line-height:1.08;letter-spacing:-.025em;margin:8px 0 12px;font-weight:700;max-width:12em}
+.lead{color:var(--muted);margin:0 0 28px;max-width:34em}
+.marathon{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;background:var(--s1);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:10px;padding:18px 18px 18px 16px;cursor:pointer}
+.marathon:hover{border-color:#444;border-left-color:var(--red)}
+.row-title{display:block;font-size:18px;font-weight:600;line-height:1.3}
+.row-desc{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.row-end{display:flex;align-items:center;gap:10px;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+.row-end svg{width:9px;height:16px}
+.list-h{font-size:15px;font-weight:600;color:var(--muted);margin:36px 0 4px}
+.row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:16px 2px;cursor:pointer}
+.row:hover .row-title,.marathon:hover .row-title{color:#fff}
+.row:hover .row-end,.marathon:hover .row-end{color:var(--text)}
+
+/* quiz */
+.qtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.back{background:none;border:0;color:var(--muted);padding:8px 8px 8px 0;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:15px}
+.back svg{width:8px;height:14px}
+.back:hover{color:var(--text)}
+.counter{color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums}
+.bar{height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);transition:width .25s ease}
+.qmeta{color:var(--muted);font-size:14px;margin:22px 0 6px}
+.qtext{font-size:21px;line-height:1.5;margin:0 0 22px;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.qtext .katex{font-size:1.12em}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:600px){.opts{grid-template-columns:1fr 1fr}.opt{font-size:20px}}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-height:66px;font-size:18px;cursor:pointer;overflow-x:auto;transition:border-color .12s,background-color .12s,opacity .12s}
+.opt .k{flex:none;width:1.1em;color:#6f6f6f;font-size:13px;font-variant-numeric:tabular-nums}
+.opt .ov{min-width:0}
+@media (pointer:coarse){.opt .k{display:none}}
+.opt:hover:not(:disabled){border-color:#555}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:var(--ok);background:rgba(70,200,115,.10)}
+.opt.wrong{border-color:var(--red);background:rgba(255,0,0,.10)}
+.opt.dim{opacity:.45}
+.verdict{min-height:24px;margin:14px 0 0;font-weight:600}
+.verdict.ok{color:var(--ok)}
+.verdict.bad{color:var(--red-text)}
+.verdict.skip{color:var(--muted);font-weight:500}
+.expl{margin:12px 0 0;background:var(--s1);border-left:2px solid var(--red);padding:14px 16px;border-radius:0 10px 10px 0;line-height:1.85}
+.expl p{margin:6px 0 0}
+.expl-ans{font-weight:600}
+.link{background:none;border:0;padding:0;margin-top:10px;color:var(--red-text);cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-size:15px}
+.actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{flex:1 1 150px;padding:14px 18px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer}
+.btn.primary{background:#f0f0f0;color:#000;border:1px solid #f0f0f0}
+.btn.primary:hover{background:#fff}
+.btn.ghost{background:none;border:1px solid var(--line)}
+.btn.ghost:hover{border-color:#555}
+
+/* result */
+.score{font-size:64px;font-weight:700;letter-spacing:-.03em;line-height:1;margin:20px 0 8px;font-variant-numeric:tabular-nums}
+.score span{font-size:28px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:6px}
+.bd{margin:24px 0 8px}
+.bd-row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.bd-row b{font-weight:500}
+.bd-row span{color:var(--muted);font-variant-numeric:tabular-nums}
+.bd-bar{grid-column:1 / -1;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.bd-bar i{display:block;height:100%;background:var(--text)}
+
+/* theory */
+.subnav{position:sticky;top:56px;z-index:15;background:#000;border-bottom:1px solid var(--line)}
+.subnav-in{max-width:760px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+.subnav-in::-webkit-scrollbar{display:none}
+.chip{flex:none;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.chip.on{color:var(--text);border-color:#555}
+.chip.on::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red)}
+.tsec{scroll-margin-top:118px;margin-bottom:56px}
+.tsec h2{font-size:28px;line-height:1.15;letter-spacing:-.02em;margin:8px 0 12px;font-weight:700}
+.tsec h3{font-size:18px;font-weight:600;margin:28px 0 8px}
+.tsec p,.tsec li{line-height:1.75;max-width:40em}
+.tsec ul,.tsec ol{padding-left:1.2em}
+.tsec li{margin:6px 0}
+.small{font-size:14px}
+.muted{color:var(--muted)}
+.note{border-left:2px solid var(--red);padding:2px 0 2px 14px;margin:18px 0}
+.katex-display{margin:16px 0;overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.dg{display:grid;grid-template-columns:1fr;column-gap:24px;margin:12px 0}
+@media (min-width:600px){.dg{grid-template-columns:1fr 1fr}}
+.dg > div{padding:10px 2px;border-bottom:1px solid var(--line);overflow-x:auto;overflow-y:hidden}
+.tw{overflow-x:auto;margin:12px 0}
+.tbl{border-collapse:collapse;width:100%;min-width:340px}
+.tbl th,.tbl td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.tbl th{color:var(--muted);font-weight:500;font-size:14px}
+.tbl td:first-child,.tbl th:first-child{text-align:left}
+
+/* unit circle */
+.uc{display:grid;grid-template-columns:1fr;gap:16px;align-items:center;margin:16px 0 8px}
+@media (min-width:660px){.uc{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}}
+.uc-fig svg{display:block;width:100%;max-width:400px;margin:0 auto;touch-action:manipulation}
+.uc-fig svg:focus{outline:none}
+.ax{stroke:#3a3a3a;stroke-width:1}
+.cir{fill:none;stroke:#5a5a5a;stroke-width:1.5}
+.proj{stroke:#6a6a6a;stroke-width:1;stroke-dasharray:4 4}
+.sg{stroke:#ececec;stroke-width:3;stroke-linecap:round}
+.rad{stroke:#ececec;stroke-width:1.5}
+.arc{fill:none;stroke:var(--red);stroke-width:2}
+.pt{cursor:pointer}
+.pt .hit{fill:transparent}
+.pt .dot{fill:#8a8a8a}
+.pt:hover .dot{fill:#fff}
+.pt:focus{outline:none}
+.pt:focus-visible .hit{stroke:#fff;stroke-width:1.5}
+.lbl{fill:#9b9b9b;font:12px var(--font)}
+.lbl.on{fill:#fff;font-weight:600}
+.slbl{fill:#ececec;font:11px var(--font)}
+.reddot{fill:var(--red);pointer-events:none}
+.uc-angle{font-size:22px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.uc-angle .muted{font-size:15px}
+.uc-vals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.uc-vals > div{background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:76px}
+.uc-vals .lb{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
+.uc-vals .vl{font-size:19px}
+.uc-vals .nd{font-size:15px;color:var(--muted)}
+.uc-step{display:flex;gap:8px}
+.uc-step .btn{flex:1 1 0;padding:11px 12px;font-size:15px;font-weight:500}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body data-view="practice">
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><img src="data:image/png;base64,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" alt="" width="17" height="28"><span>Матанализ</span></div>
+    <nav class="seg" role="tablist" aria-label="Раздел">
+      <button role="tab" data-view="theory" aria-selected="false">Теория</button>
+      <button role="tab" data-view="practice" aria-selected="true">Практика</button>
+    </nav>
+  </div>
+</header>
+<div id="warn"></div>
+
+<main>
+  <section id="practice" class="wrap" aria-live="polite"></section>
+
+  <section id="theory">
+    <nav class="subnav" aria-label="Темы теории">
+      <div class="subnav-in">
+        <button class="chip on" data-go="th-deriv">Производные</button>
+        <button class="chip" data-go="th-growth">Скорость роста</button>
+        <button class="chip" data-go="th-lim">Устные пределы</button>
+        <button class="chip" data-go="th-rem">Замечательные пределы</button>
+        <button class="chip" data-go="th-circle">Окружность</button>
+      </div>
+    </nav>
+    <div class="wrap" id="theory-body">
+
+<section class="tsec" id="th-deriv">
+<h2>Производные</h2>
+<p>Таблица основных производных. Здесь $C$ — константа, $\alpha$ — любое число, $a&gt;0,\ a\ne1$.</p>
+<div class="dg ds">
+<div>$(C)'=0$</div>
+<div>$(x^{\alpha})'=\alpha x^{\alpha-1}$</div>
+<div>$(\sqrt{x})'=\frac{1}{2\sqrt{x}}$</div>
+<div>$\left(\frac{1}{x}\right)'=-\frac{1}{x^2}$</div>
+<div>$(a^x)'=a^x\ln a$</div>
+<div>$(e^x)'=e^x$</div>
+<div>$(\log_a x)'=\frac{1}{x\ln a}$</div>
+<div>$(\ln x)'=\frac{1}{x}$</div>
+<div>$(\sin x)'=\cos x$</div>
+<div>$(\cos x)'=-\sin x$</div>
+<div>$(\tg x)'=\frac{1}{\cos^2 x}$</div>
+<div>$(\ctg x)'=-\frac{1}{\sin^2 x}$</div>
+<div>$(\arcsin x)'=\frac{1}{\sqrt{1-x^2}}$</div>
+<div>$(\arccos x)'=-\frac{1}{\sqrt{1-x^2}}$</div>
+<div>$(\arctg x)'=\frac{1}{1+x^2}$</div>
+<div>$(\arcctg x)'=-\frac{1}{1+x^2}$</div>
+<div>$(\sh x)'=\ch x$</div>
+<div>$(\ch x)'=\sh x$</div>
+<div>$(\th x)'=\frac{1}{\ch^2 x}$</div>
+<div>$(\cth x)'=-\frac{1}{\sh^2 x}$</div>
+</div>
+<p class="note">Правило знака: у функций на «ко-» — $\cos x$, $\ctg x$, $\arccos x$, $\arcctg x$ — производная со знаком минус. Гиперболический косинус — исключение: $(\ch x)'=\sh x$, без минуса.</p>
+<p>Гиперболические функции: $\sh x=\frac{e^x-e^{-x}}{2}$, $\ch x=\frac{e^x+e^{-x}}{2}$, $\th x=\frac{\sh x}{\ch x}$, $\cth x=\frac{\ch x}{\sh x}$. Основное тождество: $\ch^2x-\sh^2x=1$.</p>
+<h3>Правила дифференцирования</h3>
+<div class="dg ds">
+<div>$(u\pm v)'=u'\pm v'$</div>
+<div>$(Cu)'=C\,u'$</div>
+<div>$(uv)'=u'v+uv'$</div>
+<div>$\left(\frac{u}{v}\right)'=\frac{u'v-uv'}{v^2}$</div>
+</div>
+<p>Производная сложной функции — производная внешней, умноженная на производную внутренней:</p>
+$$\big(f(g(x))\big)'=f'\big(g(x)\big)\cdot g'(x)$$
+<p>Пример: $(\sin x^2)'=\cos x^2\cdot 2x$, $\ (e^{3x})'=3e^{3x}$.</p>
+</section>
+
+<section class="tsec" id="th-growth">
+<h2>Скорость роста</h2>
+<p>Запись $f\ll g$ означает, что $g$ растёт быстрее: $\frac{f}{g}\to0$. При $x\to+\infty$ (или $n\to\infty$):</p>
+$$\log_a x\ \ll\ x^{\varepsilon}\ \ll\ x^{k}\ \ll\ a^{x}\ \ll\ x!\ \ll\ x^{x}$$
+<p class="muted small">Здесь $\varepsilon&gt;0$ сколь угодно мало, $k$ сколь угодно велико, $a&gt;1$.</p>
+<ul>
+<li>Любая степень логарифма медленнее любой положительной степени: $\frac{\ln^{100}x}{x^{0{,}01}}\to0$.</li>
+<li>Любая степень медленнее любой показательной функции с основанием больше 1: $\frac{n^{1000}}{1{,}001^n}\to0$.</li>
+<li>Факториал обгоняет любую показательную функцию, а $n^n$ обгоняет факториал.</li>
+<li>Среди степеней быстрее та, где больше показатель: $n^2\ll n^3$. Среди показательных — где больше основание: $2^n\ll 3^n$.</li>
+<li>Основание логарифма не влияет на порядок роста: $\log_2 n=\frac{\ln n}{\ln 2}$ отличается от $\ln n$ в постоянное число раз.</li>
+<li>В сумме решает самое быстрое слагаемое: $n^3+2^n\sim 2^n$, $\ n^2+1000n\sim n^2$.</li>
+</ul>
+<p class="note">Как применять: в дроби найдите самое быстрое слагаемое в числителе и в знаменателе и разделите на него всё выражение.</p>
+</section>
+
+<section class="tsec" id="th-lim">
+<h2>Устные пределы</h2>
+<h3>Дробь из многочленов на бесконечности</h3>
+$$\lim_{x\to\infty}\frac{a_kx^k+\ldots}{b_mx^m+\ldots}=\begin{cases}\dfrac{a_k}{b_m}, & k=m\\[6pt] 0, & k\lt m\\[6pt] \infty, & k\gt m\end{cases}$$
+<p>Пример: $\lim\limits_{n\to\infty}\frac{3n^2+n}{5n^2-1}=\frac35$, потому что степени равны.</p>
+<h3>Табличные пределы</h3>
+<div class="dg ds">
+<div>$\lim_{n\to\infty}q^n=0,\ \ |q|&lt;1$</div>
+<div>$\lim_{n\to\infty}\sqrt[n]{a}=1,\ \ a&gt;0$</div>
+<div>$\lim_{n\to\infty}\sqrt[n]{n}=1$</div>
+<div>$\lim_{x\to0^{\pm}}\frac{1}{x}=\pm\infty$</div>
+<div>$\lim_{x\to-\infty}e^{x}=0$</div>
+<div>$\lim_{x\to0^+}\ln x=-\infty$</div>
+<div>$\lim_{x\to\pm\infty}\arctg x=\pm\frac{\pi}{2}$</div>
+<div>$\lim_{x\to0^+}x^x=1$</div>
+</div>
+<h3>Приёмы</h3>
+<ul>
+<li>Ограниченная величина, умноженная на бесконечно малую, — бесконечно малая: $\frac{\sin n}{n}\to0$, $\ x\sin\frac1x\to0$ при $x\to0$.</li>
+<li>Неопределённость $\frac00$ у многочленов — разложить на множители и сократить: $\frac{x^2-4}{x-2}=x+2\to4$.</li>
+<li>Разность корней — домножить на сопряжённое: $\sqrt{n+1}-\sqrt n=\frac{1}{\sqrt{n+1}+\sqrt n}\to0$.</li>
+<li>Сумма первых $n$ натуральных чисел: $1+2+\ldots+n=\frac{n(n+1)}{2}$.</li>
+</ul>
+<p class="note">Неопределённости, которые нельзя посчитать подстановкой: $\frac00,\ \frac\infty\infty,\ 0\cdot\infty,\ \infty-\infty,\ 1^\infty,\ 0^0,\ \infty^0$. А вот $\frac{1}{\infty}=0$ и $\infty+\infty=\infty$ неопределённостями не являются.</p>
+</section>
+
+<section class="tsec" id="th-rem">
+<h2>Замечательные пределы</h2>
+<h3>Первый</h3>
+$$\lim_{x\to0}\frac{\sin x}{x}=1$$
+<h3>Второй</h3>
+$$\lim_{x\to\infty}\left(1+\frac{1}{x}\right)^{x}=e,\qquad \lim_{x\to0}(1+x)^{1/x}=e$$
+<p>Обобщение: $\lim\limits_{x\to\infty}\left(1+\frac{a}{x}\right)^{bx}=e^{ab}$.</p>
+<h3>Эквивалентности при $x\to0$</h3>
+<p>Следствия замечательных пределов. Вместо $x$ может стоять любая бесконечно малая: $\sin 5x\sim 5x$, $\ \ln(1+x^2)\sim x^2$.</p>
+<div class="dg ds">
+<div>$\sin x\sim x$</div>
+<div>$\tg x\sim x$</div>
+<div>$\arcsin x\sim x$</div>
+<div>$\arctg x\sim x$</div>
+<div>$1-\cos x\sim\frac{x^2}{2}$</div>
+<div>$\ln(1+x)\sim x$</div>
+<div>$e^x-1\sim x$</div>
+<div>$a^x-1\sim x\ln a$</div>
+<div>$(1+x)^{\alpha}-1\sim\alpha x$</div>
+</div>
+<p>В произведении и частном бесконечно малые можно заменять эквивалентными: $\frac{\sin 3x}{\sin 2x}\sim\frac{3x}{2x}=\frac32$. В сумме и разности так делать нельзя.</p>
+<h3>Неопределённость $1^\infty$</h3>
+<p>Если $f\to1$ и $g\to\infty$, то</p>
+$$\lim f^{\,g}=e^{\lim g\,(f-1)}$$
+<p>Пример: $\lim\limits_{x\to0}(\cos x)^{1/x^2}=e^{\lim\frac{\cos x-1}{x^2}}=e^{-1/2}$.</p>
+<p class="note">Ловушки: $\lim\limits_{x\to\infty}\frac{\sin x}{x}=0$, потому что $x$ стремится к бесконечности, а не к нулю. И $\left(1+\frac1n\right)^{n^2}\to\infty$: показатель растёт быстрее, чем нужно для числа $e$.</p>
+</section>
+
+<section class="tsec" id="th-circle">
+<h2>Единичная окружность</h2>
+<p>Нажмите на точку, чтобы увидеть значения функций. Угол $\alpha$ отсчитывается от положительного направления оси $Ox$ против часовой стрелки, а точка имеет координаты $(\cos\alpha;\ \sin\alpha)$.</p>
+<div class="uc"><div class="uc-fig" id="uc-fig"></div><div id="uc-out"></div></div>
+<h3>Первая четверть</h3>
+<div class="tw"><table class="tbl ds">
+<tr><th>$\alpha$</th><th>$0$</th><th>$\frac{\pi}{6}$</th><th>$\frac{\pi}{4}$</th><th>$\frac{\pi}{3}$</th><th>$\frac{\pi}{2}$</th></tr>
+<tr><td>$\sin\alpha$</td><td>$0$</td><td>$\frac{1}{2}$</td><td>$\frac{\sqrt2}{2}$</td><td>$\frac{\sqrt3}{2}$</td><td>$1$</td></tr>
+<tr><td>$\cos\alpha$</td><td>$1$</td><td>$\frac{\sqrt3}{2}$</td><td>$\frac{\sqrt2}{2}$</td><td>$\frac{1}{2}$</td><td>$0$</td></tr>
+<tr><td>$\tg\alpha$</td><td>$0$</td><td>$\frac{\sqrt3}{3}$</td><td>$1$</td><td>$\sqrt3$</td><td>—</td></tr>
+<tr><td>$\ctg\alpha$</td><td>—</td><td>$\sqrt3$</td><td>$1$</td><td>$\frac{\sqrt3}{3}$</td><td>$0$</td></tr>
+</table></div>
+<p class="muted small">Синус растёт по ряду $\frac{\sqrt0}{2},\frac{\sqrt1}{2},\frac{\sqrt2}{2},\frac{\sqrt3}{2},\frac{\sqrt4}{2}$, косинус идёт тем же рядом в обратную сторону.</p>
+<h3>Знаки по четвертям</h3>
+<div class="tw"><table class="tbl">
+<tr><th>Четверть</th><th>$\sin$</th><th>$\cos$</th><th>$\tg,\ \ctg$</th></tr>
+<tr><td>I</td><td>+</td><td>+</td><td>+</td></tr>
+<tr><td>II</td><td>+</td><td>−</td><td>−</td></tr>
+<tr><td>III</td><td>−</td><td>−</td><td>+</td></tr>
+<tr><td>IV</td><td>−</td><td>+</td><td>−</td></tr>
+</table></div>
+<h3>Тождества и перевод углов</h3>
+<div class="dg ds">
+<div>$\sin^2\alpha+\cos^2\alpha=1$</div>
+<div>$\tg\alpha\cdot\ctg\alpha=1$</div>
+<div>$1+\tg^2\alpha=\frac{1}{\cos^2\alpha}$</div>
+<div>$1+\ctg^2\alpha=\frac{1}{\sin^2\alpha}$</div>
+<div>$\pi=180^\circ$</div>
+<div>$\alpha_{\text{рад}}=\alpha^\circ\cdot\frac{\pi}{180}$</div>
+</div>
+<p>Чётность: $\cos(-x)=\cos x$, остальные три функции нечётные, например $\sin(-x)=-\sin x$.</p>
+<h3>Формулы приведения</h3>
+<p>Для углов $\pi\pm x$ и $2\pi\pm x$ функция не меняется, для $\frac\pi2\pm x$ и $\frac{3\pi}2\pm x$ меняется на парную: $\sin\leftrightarrow\cos$, $\tg\leftrightarrow\ctg$. Знак ставится тот, который был бы у исходной функции, если считать $x$ острым углом.</p>
+<p>Пример: $\cos\left(\frac\pi2+x\right)$. Косинус меняется на синус, угол лежит во II четверти, косинус там отрицателен, значит $\cos\left(\frac\pi2+x\right)=-\sin x$.</p>
+<h3>Обратные функции</h3>
+<div class="tw"><table class="tbl ds">
+<tr><th>Функция</th><th>Область значений</th></tr>
+<tr><td>$\arcsin x$</td><td>$\left[-\frac{\pi}{2};\ \frac{\pi}{2}\right]$</td></tr>
+<tr><td>$\arccos x$</td><td>$[0;\ \pi]$</td></tr>
+<tr><td>$\arctg x$</td><td>$\left(-\frac{\pi}{2};\ \frac{\pi}{2}\right)$</td></tr>
+<tr><td>$\arcctg x$</td><td>$(0;\ \pi)$</td></tr>
+</table></div>
+<p>$\arcsin(-x)=-\arcsin x$, $\ \arctg(-x)=-\arctg x$, но $\arccos(-x)=\pi-\arccos x$.</p>
+</section>
+
+    </div>
+  </section>
+</main>
+
+<script type="text/plain" id="bank">
+# deriv
+Q: Найдите $(C)'$, где $C$ — константа
+A: $0$
+W: $C$ ;; $1$ ;; $Cx$
+E: Константа не меняется, поэтому скорость её изменения равна нулю.
+
+Q: Найдите $(x^{\alpha})'$
+A: $\alpha x^{\alpha-1}$
+W: $x^{\alpha-1}$ ;; $\alpha x^{\alpha}$ ;; $\frac{x^{\alpha+1}}{\alpha+1}$
+E: Показатель выносится множителем и уменьшается на единицу. Последний вариант — первообразная, а не производная.
+
+Q: Найдите $(x^7)'$
+A: $7x^6$
+W: $x^6$ ;; $7x^7$ ;; $\frac{x^8}{8}$
+E: $(x^\alpha)'=\alpha x^{\alpha-1}$ при $\alpha=7$.
+
+Q: Найдите $(\sqrt{x})'$
+A: $\frac{1}{2\sqrt{x}}$
+W: $\frac{1}{\sqrt{x}}$ ;; $2\sqrt{x}$ ;; $\frac{\sqrt{x}}{2}$
+E: $\sqrt x=x^{1/2}$, поэтому $(\sqrt x)'=\frac12x^{-1/2}=\frac{1}{2\sqrt x}$.
+
+Q: Найдите $\left(\frac{1}{x}\right)'$
+A: $-\frac{1}{x^2}$
+W: $\frac{1}{x^2}$ ;; $\ln x$ ;; $-\frac{1}{x}$
+E: $\frac1x=x^{-1}$, поэтому $\left(x^{-1}\right)'=-x^{-2}=-\frac{1}{x^2}$.
+
+Q: Найдите $(\sqrt[3]{x})'$
+A: $\frac{1}{3\sqrt[3]{x^2}}$
+W: $\frac{1}{3\sqrt[3]{x}}$ ;; $3\sqrt[3]{x^2}$ ;; $\frac{3}{\sqrt[3]{x^2}}$
+E: $\sqrt[3]x=x^{1/3}$, поэтому производная равна $\frac13x^{-2/3}=\frac{1}{3\sqrt[3]{x^2}}$.
+
+Q: Найдите $\left(\frac{1}{x^2}\right)'$
+A: $-\frac{2}{x^3}$
+W: $\frac{2}{x^3}$ ;; $-\frac{1}{2x^3}$ ;; $-\frac{2}{x}$
+E: $\frac1{x^2}=x^{-2}$, поэтому $\left(x^{-2}\right)'=-2x^{-3}=-\frac{2}{x^3}$.
+
+Q: Найдите $(e^x)'$
+A: $e^x$
+W: $xe^{x-1}$ ;; $e^x\ln x$ ;; $\frac{e^x}{x}$
+E: Экспонента равна своей производной. Это не степенная функция, так что правило для $x^\alpha$ здесь не работает.
+
+Q: Найдите $(a^x)'$, где $a>0,\ a\ne1$
+A: $a^x\ln a$
+W: $xa^{x-1}$ ;; $\frac{a^x}{\ln a}$ ;; $a^x$
+E: $a^x=e^{x\ln a}$, по правилу цепочки получаем $e^{x\ln a}\cdot\ln a=a^x\ln a$.
+
+Q: Найдите $(2^x)'$
+A: $2^x\ln 2$
+W: $x\cdot2^{x-1}$ ;; $\frac{2^x}{\ln 2}$ ;; $2^x$
+E: По формуле $(a^x)'=a^x\ln a$ при $a=2$.
+
+Q: Найдите $(\ln x)'$
+A: $\frac{1}{x}$
+W: $\frac{1}{x\ln x}$ ;; $-\frac{1}{x^2}$ ;; $\frac{\ln x}{x}$
+E: Табличная производная: $(\ln x)'=\frac1x$.
+
+Q: Найдите $(\log_a x)'$
+A: $\frac{1}{x\ln a}$
+W: $\frac{\ln a}{x}$ ;; $\frac{1}{x}$ ;; $\frac{1}{a\ln x}$
+E: $\log_a x=\frac{\ln x}{\ln a}$, а $\frac1{\ln a}$ — просто константа.
+
+Q: Найдите $(\log_2 x)'$
+A: $\frac{1}{x\ln 2}$
+W: $\frac{\ln 2}{x}$ ;; $\frac{1}{2x}$ ;; $\frac{2}{x}$
+E: По формуле $(\log_a x)'=\frac{1}{x\ln a}$ при $a=2$.
+
+Q: Найдите $(\ln|x|)'$ при $x\ne0$
+A: $\frac{1}{x}$
+W: $\frac{1}{|x|}$ ;; $-\frac{1}{x}$ ;; $\frac{|x|}{x}$
+E: При $x<0$ имеем $(\ln(-x))'=\frac{-1}{-x}=\frac1x$. Ответ одинаков для обоих знаков $x$.
+
+Q: Найдите $(\sin x)'$
+A: $\cos x$
+W: $-\cos x$ ;; $-\sin x$ ;; $\frac{1}{\cos^2 x}$
+E: Табличная производная: $(\sin x)'=\cos x$.
+
+Q: Найдите $(\cos x)'$
+A: $-\sin x$
+W: $\sin x$ ;; $-\cos x$ ;; $\cos x$
+E: Функции на «ко-» дают производную с минусом: $(\cos x)'=-\sin x$.
+
+Q: Найдите $(\tg x)'$
+A: $\frac{1}{\cos^2 x}$
+W: $-\frac{1}{\sin^2 x}$ ;; $\frac{1}{\sin^2 x}$ ;; $\ctg x$
+E: $\left(\frac{\sin x}{\cos x}\right)'=\frac{\cos^2x+\sin^2x}{\cos^2x}=\frac{1}{\cos^2x}$.
+
+Q: Найдите $(\ctg x)'$
+A: $-\frac{1}{\sin^2 x}$
+W: $\frac{1}{\sin^2 x}$ ;; $-\frac{1}{\cos^2 x}$ ;; $-\tg x$
+E: Функция на «ко-», значит с минусом: $(\ctg x)'=-\frac{1}{\sin^2x}$.
+
+Q: Найдите $(\arcsin x)'$
+A: $\frac{1}{\sqrt{1-x^2}}$
+W: $-\frac{1}{\sqrt{1-x^2}}$ ;; $\frac{1}{1+x^2}$ ;; $\frac{1}{\sqrt{1+x^2}}$
+E: Табличная производная, определена при $|x|<1$.
+
+Q: Найдите $(\arccos x)'$
+A: $-\frac{1}{\sqrt{1-x^2}}$
+W: $\frac{1}{\sqrt{1-x^2}}$ ;; $-\frac{1}{1+x^2}$ ;; $-\frac{1}{\sqrt{x^2-1}}$
+E: $\arccos x=\frac\pi2-\arcsin x$, поэтому производные отличаются только знаком.
+
+Q: Найдите $(\arctg x)'$
+A: $\frac{1}{1+x^2}$
+W: $-\frac{1}{1+x^2}$ ;; $\frac{1}{\sqrt{1-x^2}}$ ;; $\frac{1}{1-x^2}$
+E: Табличная производная: $(\arctg x)'=\frac{1}{1+x^2}$.
+
+Q: Найдите $(\arcctg x)'$
+A: $-\frac{1}{1+x^2}$
+W: $\frac{1}{1+x^2}$ ;; $-\frac{1}{\sqrt{1-x^2}}$ ;; $-\frac{1}{1-x^2}$
+E: $\arcctg x=\frac\pi2-\arctg x$, отсюда минус.
+
+Q: Найдите $(\sh x)'$
+A: $\ch x$
+W: $-\ch x$ ;; $\sh x$ ;; $\frac{1}{\ch^2 x}$
+E: $\left(\frac{e^x-e^{-x}}{2}\right)'=\frac{e^x+e^{-x}}{2}=\ch x$.
+
+Q: Найдите $(\ch x)'$
+A: $\sh x$
+W: $-\sh x$ ;; $\ch x$ ;; $-\ch x$
+E: $\left(\frac{e^x+e^{-x}}{2}\right)'=\frac{e^x-e^{-x}}{2}=\sh x$. В отличие от $\cos x$, минуса нет.
+
+Q: Найдите $(\th x)'$
+A: $\frac{1}{\ch^2 x}$
+W: $-\frac{1}{\ch^2 x}$ ;; $\frac{1}{\sh^2 x}$ ;; $\frac{1}{\cos^2 x}$
+E: Аналогично тангенсу: $\left(\frac{\sh x}{\ch x}\right)'=\frac{\ch^2x-\sh^2x}{\ch^2x}=\frac1{\ch^2x}$.
+
+Q: Найдите $(\cth x)'$
+A: $-\frac{1}{\sh^2 x}$
+W: $\frac{1}{\sh^2 x}$ ;; $-\frac{1}{\ch^2 x}$ ;; $-\frac{1}{\sin^2 x}$
+E: $\left(\frac{\ch x}{\sh x}\right)'=\frac{\sh^2x-\ch^2x}{\sh^2x}=-\frac1{\sh^2x}$, так как $\ch^2x-\sh^2x=1$.
+
+Q: Производная произведения $(uv)'$ равна
+A: $u'v+uv'$
+W: $u'v'$ ;; $u'v-uv'$ ;; $\frac{u'}{v'}$
+E: Правило Лейбница: $(uv)'=u'v+uv'$.
+
+Q: Производная частного $\left(\frac{u}{v}\right)'$ равна
+A: $\frac{u'v-uv'}{v^2}$
+W: $\frac{u'v+uv'}{v^2}$ ;; $\frac{uv'-u'v}{v^2}$ ;; $\frac{u'}{v'}$
+E: В числителе первой идёт производная числителя: $u'v-uv'$. Если перепутать порядок, знак станет противоположным.
+
+Q: Производная сложной функции $\big(f(g(x))\big)'$ равна
+A: $f'(g(x))\cdot g'(x)$
+W: $f'(g(x))$ ;; $f'(x)\cdot g'(x)$ ;; $f(g'(x))\cdot g'(x)$
+E: Производная внешней функции в точке $g(x)$, умноженная на производную внутренней.
+
+Q: Найдите $(e^{3x})'$
+A: $3e^{3x}$
+W: $e^{3x}$ ;; $3x\,e^{3x-1}$ ;; $\frac{e^{3x}}{3}$
+E: Цепочка: $e^{3x}\cdot(3x)'=3e^{3x}$.
+
+Q: Найдите $(\sin 2x)'$
+A: $2\cos 2x$
+W: $\cos 2x$ ;; $-2\cos 2x$ ;; $2\cos x$
+E: Цепочка: $\cos 2x\cdot(2x)'=2\cos2x$.
+
+Q: Производная какой функции равна $\frac{1}{1+x^2}$?
+A: $\arctg x$
+W: $\arcctg x$ ;; $\ln(1+x^2)$ ;; $\arcsin x$
+E: $(\arctg x)'=\frac1{1+x^2}$. У $\ln(1+x^2)$ производная $\frac{2x}{1+x^2}$.
+
+Q: Производная какой функции равна $-\frac{1}{\sin^2 x}$?
+A: $\ctg x$
+W: $\tg x$ ;; $-\ctg x$ ;; $\frac{1}{\sin x}$
+E: $(\ctg x)'=-\frac1{\sin^2x}$.
+
+Q: Производная какой функции равна $\frac{1}{x}$ при $x>0$?
+A: $\ln x$
+W: $\lg x$ ;; $\ln x^2$ ;; $-\frac{1}{x^2}$
+E: $(\lg x)'=\frac{1}{x\ln10}$, $(\ln x^2)'=\frac2x$, а $\frac1x$ — это производная $\ln x$, а не наоборот.
+
+# growth
+Q: Что растёт быстрее при $n\to\infty$: $n^{100}$ или $1{,}01^n$?
+A: $1{,}01^n$
+W: $n^{100}$ ;; Одного порядка
+E: Показательная функция с основанием больше 1 обгоняет любую степень: $\frac{n^{100}}{1{,}01^n}\to0$. На малых $n$ лидирует степень, но решает поведение на бесконечности.
+
+Q: Что растёт быстрее при $x\to+\infty$: $\ln^{100}x$ или $\sqrt[100]{x}$?
+A: $\sqrt[100]{x}$
+W: $\ln^{100}x$ ;; Одного порядка
+E: Любая степень логарифма медленнее любой положительной степени $x$.
+
+Q: Что растёт быстрее при $n\to\infty$: $2^n$ или $n!$?
+A: $n!$
+W: $2^n$ ;; Одного порядка
+E: $\frac{2^n}{n!}=\frac{2}{1}\cdot\frac22\cdot\frac23\cdots\frac2n$. Множители становятся меньше $\frac12$, произведение стремится к нулю.
+
+Q: Что растёт быстрее при $n\to\infty$: $n!$ или $n^n$?
+A: $n^n$
+W: $n!$ ;; Одного порядка
+E: $\frac{n!}{n^n}=\frac1n\cdot\frac2n\cdots\frac nn\le\frac1n\to0$.
+
+Q: Что растёт быстрее при $n\to\infty$: $2^n$ или $3^n$?
+A: $3^n$
+W: $2^n$ ;; Одного порядка
+E: $\frac{2^n}{3^n}=\left(\frac23\right)^n\to0$. У показательных функций решает основание.
+
+Q: Что растёт быстрее при $n\to\infty$: $10^n$ или $n!$?
+A: $n!$
+W: $10^n$ ;; Одного порядка
+E: Факториал обгоняет любую показательную функцию: при $n>20$ каждый новый множитель $\frac{10}{n}<\frac12$.
+
+Q: Что растёт быстрее при $n\to\infty$: $e^n$ или $n^{1000}$?
+A: $e^n$
+W: $n^{1000}$ ;; Одного порядка
+E: Показательная функция обгоняет любую степень, как бы велик ни был показатель.
+
+Q: Что растёт быстрее при $x\to+\infty$: $x\ln x$ или $x^{1{,}01}$?
+A: $x^{1{,}01}$
+W: $x\ln x$ ;; Одного порядка
+E: Сократим на $x$ и сравним $\ln x$ с $x^{0{,}01}$. Логарифм медленнее любой положительной степени.
+
+Q: Что растёт быстрее при $n\to\infty$: $\sqrt{n}$ или $\ln^2 n$?
+A: $\sqrt{n}$
+W: $\ln^2 n$ ;; Одного порядка
+E: Степень логарифма проигрывает любой положительной степени $n$.
+
+Q: Что растёт быстрее при $n\to\infty$: $\log_2 n$ или $\log_{10} n$?
+A: Одного порядка
+W: $\log_2 n$ ;; $\log_{10} n$
+E: $\log_2 n=\frac{\ln n}{\ln2}$, $\log_{10}n=\frac{\ln n}{\ln10}$. Они отличаются в постоянное число раз, поэтому порядок роста одинаковый.
+
+Q: Что растёт быстрее при $n\to\infty$: $n^2$ или $n^2+1000n$?
+A: Одного порядка
+W: $n^2+1000n$ ;; $n^2$
+E: $\frac{n^2+1000n}{n^2}\to1$: функции эквивалентны, младшее слагаемое на бесконечности не важно.
+
+Q: Что растёт быстрее при $n\to\infty$: $n^5$ или $n^{\ln n}$?
+A: $n^{\ln n}$
+W: $n^5$ ;; Одного порядка
+E: Показатель $\ln n$ сам растёт и рано или поздно превысит 5, а затем и любое число.
+
+Q: Расположите в порядке возрастания скорости роста при $n\to\infty$
+A: $\ln n,\ \sqrt{n},\ n^2,\ 2^n,\ n!,\ n^n$
+W: $\sqrt{n},\ \ln n,\ n^2,\ 2^n,\ n!,\ n^n$ ;; $\ln n,\ \sqrt{n},\ n^2,\ n!,\ 2^n,\ n^n$ ;; $\ln n,\ \sqrt{n},\ 2^n,\ n^2,\ n!,\ n^n$
+E: Шкала: логарифм $\ll$ степень $\ll$ показательная $\ll$ факториал $\ll n^n$.
+
+Q: $\lim_{n\to\infty}\frac{n^{10}}{2^n}$
+A: $0$
+W: $+\infty$ ;; $1$ ;; $\frac{1}{2}$
+E: Показательная функция в знаменателе растёт быстрее степени в числителе.
+
+Q: $\lim_{n\to\infty}\frac{\ln n}{n}$
+A: $0$
+W: $1$ ;; $+\infty$ ;; $e$
+E: Логарифм растёт медленнее любой положительной степени, в том числе $n^1$.
+
+Q: $\lim_{n\to\infty}\frac{n!}{n^n}$
+A: $0$
+W: $1$ ;; $\frac{1}{e}$ ;; $+\infty$
+E: $\frac{n!}{n^n}=\frac1n\cdot\frac2n\cdots\frac nn\le\frac1n\to0$.
+
+Q: $\lim_{n\to\infty}\frac{5^n}{n!}$
+A: $0$
+W: $+\infty$ ;; $5$ ;; $1$
+E: Факториал растёт быстрее любой показательной функции.
+
+Q: $\lim_{n\to\infty}\frac{n^3+2^n}{2^n+n^2}$
+A: $1$
+W: $0$ ;; $+\infty$ ;; $\frac{1}{2}$
+E: Главное слагаемое и сверху, и снизу — $2^n$. Делим на него: $\frac{n^3/2^n+1}{1+n^2/2^n}\to\frac{0+1}{1+0}=1$.
+
+# lim
+Q: $\lim_{n\to\infty}\frac{3n^2+n}{5n^2-1}$
+A: $\frac{3}{5}$
+W: $0$ ;; $+\infty$ ;; $-3$
+E: Степени равны, поэтому предел равен отношению старших коэффициентов: $\frac35$.
+
+Q: $\lim_{n\to\infty}\frac{n^3+1}{n^2+n}$
+A: $+\infty$
+W: $1$ ;; $0$ ;; $\frac{1}{2}$
+E: Степень числителя больше степени знаменателя.
+
+Q: $\lim_{n\to\infty}\frac{2n+7}{n^2}$
+A: $0$
+W: $2$ ;; $7$ ;; $+\infty$
+E: Степень знаменателя больше: дробь ведёт себя как $\frac2n\to0$.
+
+Q: $\lim_{x\to\infty}\frac{(2x+1)^3}{x^3-x}$
+A: $8$
+W: $2$ ;; $6$ ;; $+\infty$
+E: Старший член числителя $(2x)^3=8x^3$, знаменателя — $x^3$.
+
+Q: $\lim_{x\to0^+}\frac{1}{x}$
+A: $+\infty$
+W: $-\infty$ ;; $0$ ;; $1$
+E: Единица, делённая на маленькое положительное число, — большое положительное число.
+
+Q: $\lim_{x\to0^-}\frac{1}{x}$
+A: $-\infty$
+W: $+\infty$ ;; $0$ ;; $-1$
+E: При $x<0$ дробь отрицательна и неограниченно растёт по модулю.
+
+Q: $\lim_{x\to+\infty}e^{-x}$
+A: $0$
+W: $1$ ;; $-\infty$ ;; $+\infty$
+E: $e^{-x}=\frac1{e^x}$, а $e^x\to+\infty$.
+
+Q: $\lim_{x\to+\infty}\arctg x$
+A: $\frac{\pi}{2}$
+W: $+\infty$ ;; $\pi$ ;; $0$
+E: Значения арктангенса лежат в $\left(-\frac\pi2;\frac\pi2\right)$, график прижимается к асимптоте $y=\frac\pi2$.
+
+Q: $\lim_{x\to-\infty}\arctg x$
+A: $-\frac{\pi}{2}$
+W: $-\infty$ ;; $\frac{\pi}{2}$ ;; $0$
+E: Нижняя горизонтальная асимптота арктангенса — $y=-\frac\pi2$.
+
+Q: $\lim_{x\to0^+}\ln x$
+A: $-\infty$
+W: $0$ ;; $1$ ;; $+\infty$
+E: Ось $Oy$ — вертикальная асимптота логарифма, график уходит вниз.
+
+Q: $\lim_{n\to\infty}\sqrt[n]{n}$
+A: $1$
+W: $+\infty$ ;; $0$ ;; $e$
+E: $\sqrt[n]n=e^{\frac{\ln n}{n}}$, а $\frac{\ln n}{n}\to0$.
+
+Q: $\lim_{n\to\infty}\sqrt[n]{5}$
+A: $1$
+W: $5$ ;; $0$ ;; $+\infty$
+E: $\sqrt[n]5=5^{1/n}$, показатель $\frac1n\to0$, а $5^0=1$.
+
+Q: $\lim_{n\to\infty}0{,}9^n$
+A: $0$
+W: $1$ ;; $0{,}9$ ;; $+\infty$
+E: $q^n\to0$ при $|q|<1$.
+
+Q: $\lim_{n\to\infty}\frac{\sin n}{n}$
+A: $0$
+W: $1$ ;; Не существует ;; $+\infty$
+E: Ограниченная величина ($|\sin n|\le1$), делённая на бесконечно большую, стремится к нулю. Это не первый замечательный предел: там аргумент стремится к нулю.
+
+Q: $\lim_{x\to0}x\sin\frac{1}{x}$
+A: $0$
+W: $1$ ;; Не существует ;; $+\infty$
+E: Бесконечно малая $x$, умноженная на ограниченную $\sin\frac1x$, — бесконечно малая.
+
+Q: $\lim_{n\to\infty}\left(\sqrt{n+1}-\sqrt{n}\right)$
+A: $0$
+W: $1$ ;; $\frac{1}{2}$ ;; $+\infty$
+E: Домножим на сопряжённое: $\frac{1}{\sqrt{n+1}+\sqrt n}\to0$.
+
+Q: $\lim_{n\to\infty}\left(n-\sqrt{n^2+n}\right)$
+A: $-\frac{1}{2}$
+W: $0$ ;; $-\infty$ ;; $-1$
+E: $n-\sqrt{n^2+n}=\frac{-n}{n+\sqrt{n^2+n}}$. Делим на $n$: $\frac{-1}{1+\sqrt{1+1/n}}\to-\frac12$.
+
+Q: $\lim_{x\to0^-}e^{1/x}$
+A: $0$
+W: $+\infty$ ;; $1$ ;; $e$
+E: $\frac1x\to-\infty$, а $e^{t}\to0$ при $t\to-\infty$.
+
+Q: $\lim_{x\to0^+}e^{1/x}$
+A: $+\infty$
+W: $0$ ;; $1$ ;; $e$
+E: $\frac1x\to+\infty$, и экспонента тоже уходит в $+\infty$.
+
+Q: $\lim_{x\to2}\frac{x^2-4}{x-2}$
+A: $4$
+W: $0$ ;; $2$ ;; $+\infty$
+E: $\frac{(x-2)(x+2)}{x-2}=x+2\to4$.
+
+Q: $\lim_{x\to1}\frac{x^3-1}{x-1}$
+A: $3$
+W: $0$ ;; $1$ ;; $+\infty$
+E: $x^3-1=(x-1)(x^2+x+1)$, после сокращения $x^2+x+1\to3$.
+
+Q: $\lim_{n\to\infty}\frac{1+2+\ldots+n}{n^2}$
+A: $\frac{1}{2}$
+W: $1$ ;; $0$ ;; $+\infty$
+E: $1+2+\ldots+n=\frac{n(n+1)}2$, после деления на $n^2$ получаем $\frac12$.
+
+Q: $\lim_{n\to\infty}\frac{(-1)^n}{n}$
+A: $0$
+W: Не существует ;; $1$ ;; $-1$
+E: Числитель ограничен, знаменатель неограниченно растёт.
+
+Q: $\lim_{n\to\infty}\frac{2^n+3^n}{3^n}$
+A: $1$
+W: $0$ ;; $+\infty$ ;; $\frac{5}{3}$
+E: $\left(\frac23\right)^n+1\to0+1=1$.
+
+Q: $\lim_{x\to0^+}x^x$
+A: $1$
+W: $0$ ;; $+\infty$ ;; Не существует
+E: $x^x=e^{x\ln x}$, а $x\ln x\to0$: степень побеждает логарифм. Значит, предел равен $e^0=1$.
+
+# rem
+Q: $\lim_{x\to0}\frac{\sin x}{x}$
+A: $1$
+W: $0$ ;; $+\infty$ ;; Не существует
+E: Первый замечательный предел.
+
+Q: $\lim_{x\to\infty}\left(1+\frac{1}{x}\right)^{x}$
+A: $e$
+W: $1$ ;; $+\infty$ ;; $\frac{1}{e}$
+E: Второй замечательный предел. Ответ 1 — частая ошибка: здесь неопределённость $1^\infty$, а не единица.
+
+Q: $\lim_{x\to0}(1+x)^{1/x}$
+A: $e$
+W: $1$ ;; $0$ ;; $+\infty$
+E: Второй замечательный предел в другой записи, замена $t=\frac1x$.
+
+Q: $\lim_{x\to0}\frac{\sin 5x}{x}$
+A: $5$
+W: $1$ ;; $\frac{1}{5}$ ;; $0$
+E: $\sin5x\sim5x$, поэтому $\frac{5x}{x}=5$.
+
+Q: $\lim_{x\to0}\frac{\sin 3x}{\sin 2x}$
+A: $\frac{3}{2}$
+W: $1$ ;; $\frac{2}{3}$ ;; $6$
+E: $\frac{\sin3x}{\sin2x}\sim\frac{3x}{2x}=\frac32$.
+
+Q: $\lim_{x\to0}\frac{\tg x}{x}$
+A: $1$
+W: $0$ ;; $+\infty$ ;; $\frac{1}{2}$
+E: $\frac{\tg x}{x}=\frac{\sin x}{x}\cdot\frac{1}{\cos x}\to1\cdot1=1$.
+
+Q: $\lim_{x\to0}\frac{1-\cos x}{x^2}$
+A: $\frac{1}{2}$
+W: $0$ ;; $1$ ;; $2$
+E: $1-\cos x=2\sin^2\frac x2\sim2\cdot\frac{x^2}4=\frac{x^2}2$.
+
+Q: $\lim_{x\to0}\frac{\ln(1+x)}{x}$
+A: $1$
+W: $0$ ;; $e$ ;; $+\infty$
+E: $\frac{\ln(1+x)}{x}=\ln(1+x)^{1/x}\to\ln e=1$.
+
+Q: $\lim_{x\to0}\frac{e^x-1}{x}$
+A: $1$
+W: $0$ ;; $e$ ;; $e-1$
+E: Следствие второго замечательного предела: $e^x-1\sim x$.
+
+Q: $\lim_{x\to0}\frac{a^x-1}{x}$, где $a>0$
+A: $\ln a$
+W: $a$ ;; $1$ ;; $\frac{1}{\ln a}$
+E: $a^x-1=e^{x\ln a}-1\sim x\ln a$.
+
+Q: $\lim_{x\to0}\frac{(1+x)^{\alpha}-1}{x}$
+A: $\alpha$
+W: $1$ ;; $\alpha-1$ ;; $\ln\alpha$
+E: $(1+x)^\alpha-1\sim\alpha x$ при $x\to0$.
+
+Q: $\lim_{x\to0}\frac{\arcsin x}{x}$
+A: $1$
+W: $0$ ;; $\frac{\pi}{2}$ ;; $+\infty$
+E: Замена $t=\arcsin x$ даёт $\frac{t}{\sin t}\to1$.
+
+Q: $\lim_{x\to0}\frac{\arctg 4x}{x}$
+A: $4$
+W: $1$ ;; $\frac{1}{4}$ ;; $\frac{\pi}{2}$
+E: $\arctg4x\sim4x$.
+
+Q: $\lim_{n\to\infty}\left(1+\frac{2}{n}\right)^{n}$
+A: $e^2$
+W: $e$ ;; $2e$ ;; $\sqrt{e}$
+E: $\left(1+\frac an\right)^{bn}\to e^{ab}$, здесь $a=2,\ b=1$.
+
+Q: $\lim_{n\to\infty}\left(1-\frac{1}{n}\right)^{n}$
+A: $\frac{1}{e}$
+W: $e$ ;; $-e$ ;; $1$
+E: Здесь $a=-1$, поэтому получаем $e^{-1}$.
+
+Q: $\lim_{n\to\infty}\left(1+\frac{1}{n}\right)^{3n}$
+A: $e^3$
+W: $e$ ;; $3e$ ;; $e^{1/3}$
+E: $\left(\left(1+\frac1n\right)^n\right)^3\to e^3$.
+
+Q: $\lim_{n\to\infty}\left(\frac{n+3}{n+1}\right)^{n}$
+A: $e^2$
+W: $1$ ;; $e^3$ ;; $e$
+E: $\frac{n+3}{n+1}=1+\frac{2}{n+1}$, поэтому предел равен $e^{\lim\frac{2n}{n+1}}=e^2$.
+
+Q: $\lim_{n\to\infty}\left(1+\frac{1}{n}\right)^{n^2}$
+A: $+\infty$
+W: $e$ ;; $e^2$ ;; $1$
+E: $e^{\lim n^2\cdot\frac1n}=e^{\lim n}=+\infty$. Показатель растёт быстрее, чем нужно для числа $e$.
+
+Q: $\lim_{n\to\infty}\left(1+\frac{1}{n}\right)^{\sqrt{n}}$
+A: $1$
+W: $e$ ;; $\sqrt{e}$ ;; $+\infty$
+E: $e^{\lim\sqrt n\cdot\frac1n}=e^0=1$. Показатель растёт слишком медленно.
+
+Q: $\lim_{x\to\infty}x\sin\frac{1}{x}$
+A: $1$
+W: $0$ ;; $+\infty$ ;; Не существует
+E: Замена $t=\frac1x\to0$ даёт $\frac{\sin t}{t}\to1$.
+
+Q: $\lim_{x\to\infty}\frac{\sin x}{x}$
+A: $0$
+W: $1$ ;; Не существует ;; $+\infty$
+E: Ловушка: это не замечательный предел, ведь $x\to\infty$. Ограниченный числитель делится на бесконечно большой знаменатель.
+
+Q: $\lim_{x\to0}\frac{e^{2x}-1}{\sin x}$
+A: $2$
+W: $1$ ;; $\frac{1}{2}$ ;; $0$
+E: $e^{2x}-1\sim2x$ и $\sin x\sim x$, получаем $\frac{2x}{x}=2$.
+
+Q: $\lim_{x\to0}\frac{\ln(1+3x)}{2x}$
+A: $\frac{3}{2}$
+W: $\frac{2}{3}$ ;; $3$ ;; $1$
+E: $\ln(1+3x)\sim3x$, поэтому $\frac{3x}{2x}=\frac32$.
+
+Q: При $x\to0$ функция $1-\cos x$ эквивалентна
+A: $\frac{x^2}{2}$
+W: $x$ ;; $x^2$ ;; $\frac{x}{2}$
+E: $1-\cos x=2\sin^2\frac x2\sim\frac{x^2}2$.
+
+Q: $\lim_{x\to0}(\cos x)^{1/x^2}$
+A: $\frac{1}{\sqrt{e}}$
+W: $1$ ;; $e^2$ ;; $\sqrt{e}$
+E: Неопределённость $1^\infty$: $e^{\lim\frac{\cos x-1}{x^2}}=e^{-1/2}$.
+
+# circle
+Q: $\sin\frac{\pi}{6}$
+A: $\frac{1}{2}$
+W: $\frac{\sqrt{3}}{2}$ ;; $\frac{\sqrt{2}}{2}$ ;; $-\frac{1}{2}$
+E: Угол $30^\circ$: катет против него равен половине гипотенузы.
+
+Q: $\cos\frac{\pi}{6}$
+A: $\frac{\sqrt{3}}{2}$
+W: $\frac{1}{2}$ ;; $\frac{\sqrt{2}}{2}$ ;; $\sqrt{3}$
+E: Точка $\frac\pi6$ имеет координаты $\left(\frac{\sqrt3}2;\frac12\right)$, косинус — первая координата.
+
+Q: $\cos\frac{\pi}{3}$
+A: $\frac{1}{2}$
+W: $\frac{\sqrt{3}}{2}$ ;; $\frac{\sqrt{2}}{2}$ ;; $\sqrt{3}$
+E: Точка $\frac\pi3$ имеет координаты $\left(\frac12;\frac{\sqrt3}2\right)$.
+
+Q: $\sin\frac{\pi}{4}$
+A: $\frac{\sqrt{2}}{2}$
+W: $\frac{1}{2}$ ;; $\frac{\sqrt{3}}{2}$ ;; $1$
+E: На биссектрисе первой четверти синус и косинус равны: $\frac{\sqrt2}2$.
+
+Q: $\tg\frac{\pi}{3}$
+A: $\sqrt{3}$
+W: $\frac{\sqrt{3}}{3}$ ;; $1$ ;; $\frac{\sqrt{3}}{2}$
+E: $\frac{\sin}{\cos}=\frac{\sqrt3/2}{1/2}=\sqrt3$.
+
+Q: $\tg\frac{\pi}{6}$
+A: $\frac{\sqrt{3}}{3}$
+W: $\sqrt{3}$ ;; $\frac{1}{2}$ ;; $1$
+E: $\frac{1/2}{\sqrt3/2}=\frac1{\sqrt3}=\frac{\sqrt3}3$.
+
+Q: $\ctg\frac{\pi}{4}$
+A: $1$
+W: $0$ ;; $\sqrt{3}$ ;; $\frac{\sqrt{2}}{2}$
+E: Синус и косинус равны, их отношение равно 1.
+
+Q: $\sin\frac{\pi}{2}$
+A: $1$
+W: $0$ ;; $-1$ ;; Не определён
+E: Точка $\frac\pi2$ — верхняя точка окружности $(0;1)$.
+
+Q: $\cos\pi$
+A: $-1$
+W: $1$ ;; $0$ ;; Не определён
+E: Точка $\pi$ — левая точка окружности $(-1;0)$.
+
+Q: $\sin\frac{3\pi}{2}$
+A: $-1$
+W: $1$ ;; $0$ ;; $-\frac{1}{2}$
+E: Точка $\frac{3\pi}2$ — нижняя точка окружности $(0;-1)$.
+
+Q: $\tg\frac{\pi}{2}$
+A: Не определён
+W: $0$ ;; $1$ ;; $+\infty$
+E: $\cos\frac\pi2=0$, а делить на ноль нельзя.
+
+Q: $\sin\frac{5\pi}{6}$
+A: $\frac{1}{2}$
+W: $-\frac{1}{2}$ ;; $\frac{\sqrt{3}}{2}$ ;; $-\frac{\sqrt{3}}{2}$
+E: $\sin(\pi-x)=\sin x$, поэтому $\sin\frac{5\pi}6=\sin\frac\pi6$.
+
+Q: $\cos\frac{2\pi}{3}$
+A: $-\frac{1}{2}$
+W: $\frac{1}{2}$ ;; $-\frac{\sqrt{3}}{2}$ ;; $\frac{\sqrt{3}}{2}$
+E: Вторая четверть, косинус отрицательный: $\cos\frac{2\pi}3=-\cos\frac\pi3$.
+
+Q: $\cos\frac{3\pi}{4}$
+A: $-\frac{\sqrt{2}}{2}$
+W: $\frac{\sqrt{2}}{2}$ ;; $-\frac{1}{2}$ ;; $-1$
+E: Вторая четверть, косинус отрицательный.
+
+Q: $\sin\frac{7\pi}{6}$
+A: $-\frac{1}{2}$
+W: $\frac{1}{2}$ ;; $-\frac{\sqrt{3}}{2}$ ;; $\frac{\sqrt{3}}{2}$
+E: $\sin(\pi+x)=-\sin x$, третья четверть.
+
+Q: $\cos\frac{5\pi}{4}$
+A: $-\frac{\sqrt{2}}{2}$
+W: $\frac{\sqrt{2}}{2}$ ;; $-\frac{1}{2}$ ;; $-\frac{\sqrt{3}}{2}$
+E: Третья четверть: обе координаты отрицательны.
+
+Q: $\sin\frac{4\pi}{3}$
+A: $-\frac{\sqrt{3}}{2}$
+W: $\frac{\sqrt{3}}{2}$ ;; $-\frac{1}{2}$ ;; $\frac{1}{2}$
+E: $\sin\left(\pi+\frac\pi3\right)=-\sin\frac\pi3$.
+
+Q: $\cos\frac{11\pi}{6}$
+A: $\frac{\sqrt{3}}{2}$
+W: $-\frac{\sqrt{3}}{2}$ ;; $\frac{1}{2}$ ;; $-\frac{1}{2}$
+E: $\frac{11\pi}6=2\pi-\frac\pi6$, а косинус чётный, поэтому ответ $\cos\frac\pi6$.
+
+Q: $\tg\frac{3\pi}{4}$
+A: $-1$
+W: $1$ ;; $-\sqrt{3}$ ;; Не определён
+E: Вторая четверть: синус положителен, косинус отрицателен, тангенс отрицателен.
+
+Q: $\tg\frac{5\pi}{6}$
+A: $-\frac{\sqrt{3}}{3}$
+W: $\frac{\sqrt{3}}{3}$ ;; $-\sqrt{3}$ ;; $\sqrt{3}$
+E: $\tg(\pi-x)=-\tg x$, поэтому ответ $-\tg\frac\pi6$.
+
+Q: $\sin\left(-\frac{\pi}{3}\right)$
+A: $-\frac{\sqrt{3}}{2}$
+W: $\frac{\sqrt{3}}{2}$ ;; $-\frac{1}{2}$ ;; $\frac{1}{2}$
+E: Синус нечётный: $\sin(-x)=-\sin x$.
+
+Q: $\cos\left(-\frac{\pi}{4}\right)$
+A: $\frac{\sqrt{2}}{2}$
+W: $-\frac{\sqrt{2}}{2}$ ;; $\frac{1}{2}$ ;; $-1$
+E: Косинус чётный: $\cos(-x)=\cos x$.
+
+Q: Координаты точки единичной окружности для угла $\frac{2\pi}{3}$
+A: $\left(-\frac{1}{2};\ \frac{\sqrt{3}}{2}\right)$
+W: $\left(\frac{1}{2};\ \frac{\sqrt{3}}{2}\right)$ ;; $\left(-\frac{\sqrt{3}}{2};\ \frac{1}{2}\right)$ ;; $\left(\frac{\sqrt{3}}{2};\ -\frac{1}{2}\right)$
+E: Точка — это $(\cos\alpha;\ \sin\alpha)$. Во второй четверти $x<0$, $y>0$.
+
+Q: Какому углу из $[0;\ 2\pi)$ соответствует точка $\left(\frac{\sqrt{2}}{2};\ -\frac{\sqrt{2}}{2}\right)$?
+A: $\frac{7\pi}{4}$
+W: $\frac{3\pi}{4}$ ;; $\frac{5\pi}{4}$ ;; $\frac{\pi}{4}$
+E: $x>0$, $y<0$ — четвёртая четверть, угол $2\pi-\frac\pi4$.
+
+Q: $150^\circ$ в радианах
+A: $\frac{5\pi}{6}$
+W: $\frac{2\pi}{3}$ ;; $\frac{3\pi}{4}$ ;; $\frac{5\pi}{3}$
+E: $150\cdot\frac{\pi}{180}=\frac{5\pi}6$.
+
+Q: $\frac{4\pi}{3}$ в градусах
+A: $240^\circ$
+W: $210^\circ$ ;; $270^\circ$ ;; $300^\circ$
+E: $\frac43\cdot180^\circ=240^\circ$.
+
+Q: В какой четверти $\sin x>0$ и $\cos x<0$?
+A: II
+W: I ;; III ;; IV
+E: Левее оси $Oy$ ($\cos x<0$) и выше оси $Ox$ ($\sin x>0$).
+
+Q: $\arcsin\frac{1}{2}$
+A: $\frac{\pi}{6}$
+W: $\frac{\pi}{3}$ ;; $\frac{5\pi}{6}$ ;; $\frac{\pi}{4}$
+E: Арксинус берётся из $\left[-\frac\pi2;\frac\pi2\right]$, поэтому $\frac{5\pi}6$ не подходит, хотя синус там тоже равен $\frac12$.
+
+Q: $\arccos\left(-\frac{1}{2}\right)$
+A: $\frac{2\pi}{3}$
+W: $-\frac{\pi}{3}$ ;; $\frac{4\pi}{3}$ ;; $\frac{\pi}{3}$
+E: $\arccos(-x)=\pi-\arccos x=\pi-\frac\pi3$. Значения арккосинуса лежат в $[0;\pi]$.
+
+Q: $\arctg(-1)$
+A: $-\frac{\pi}{4}$
+W: $\frac{3\pi}{4}$ ;; $\frac{7\pi}{4}$ ;; $\frac{\pi}{4}$
+E: Арктангенс берётся из $\left(-\frac\pi2;\frac\pi2\right)$ и нечётен.
+
+Q: $\arcsin\left(-\frac{\sqrt{3}}{2}\right)$
+A: $-\frac{\pi}{3}$
+W: $\frac{4\pi}{3}$ ;; $-\frac{\pi}{6}$ ;; $\frac{5\pi}{3}$
+E: Арксинус нечётен: $-\arcsin\frac{\sqrt3}2=-\frac\pi3$.
+
+Q: $\arccos 0$
+A: $\frac{\pi}{2}$
+W: $0$ ;; $\pi$ ;; $-\frac{\pi}{2}$
+E: Косинус равен нулю в точке $\frac\pi2$, и она лежит в $[0;\pi]$.
+
+Q: $1+\tg^2x=$
+A: $\frac{1}{\cos^2 x}$
+W: $\frac{1}{\sin^2 x}$ ;; $\cos^2 x$ ;; $1$
+E: Разделите $\sin^2x+\cos^2x=1$ на $\cos^2x$.
+
+Q: $\sin(\pi-x)=$
+A: $\sin x$
+W: $-\sin x$ ;; $\cos x$ ;; $-\cos x$
+E: Для $\pi\pm x$ функция не меняется. При остром $x$ угол $\pi-x$ во II четверти, синус там положителен.
+
+Q: $\cos\left(\frac{\pi}{2}+x\right)=$
+A: $-\sin x$
+W: $\sin x$ ;; $\cos x$ ;; $-\cos x$
+E: Для $\frac\pi2\pm x$ косинус меняется на синус. Угол во II четверти, косинус там отрицателен.
+</script>
+
+<script>
+(function(){
+"use strict";
+
+var MACROS = {
+  "\\tg":"\\operatorname{tg}", "\\ctg":"\\operatorname{ctg}",
+  "\\arctg":"\\operatorname{arctg}", "\\arcctg":"\\operatorname{arcctg}",
+  "\\sh":"\\operatorname{sh}", "\\ch":"\\operatorname{ch}",
+  "\\th":"\\operatorname{th}", "\\cth":"\\operatorname{cth}"
+};
+var HAS_KATEX = false;
+
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+function tex(s, display){
+  if (HAS_KATEX){
+    try {
+      return katex.renderToString(s, {throwOnError:false, displayMode:!!display, macros:Object.assign({}, MACROS)});
+    } catch(e){}
+  }
+  return '<code class="tex">' + esc(s) + '</code>';
+}
+// text with $...$ fragments
+function rich(str, ds){
+  return String(str).split("$").map(function(p, i){
+    return i % 2 ? tex((ds ? "\\displaystyle " : "") + p) : esc(p);
+  }).join("");
+}
+
+/* ---------- question bank ---------- */
+function parseBank(txt){
+  var qs = [], topic = null, cur = null;
+  txt.split("\n").forEach(function(line){
+    line = line.trim();
+    if (!line) return;
+    if (line.indexOf("# ") === 0){ topic = line.slice(2).trim(); return; }
+    var k = line.slice(0,2), v = line.slice(2).trim();
+    if (k === "Q:"){ cur = {t:topic, q:v, a:"", w:[], e:""}; qs.push(cur); }
+    else if (k === "A:") cur.a = v;
+    else if (k === "W:") cur.w = v.split(";;").map(function(s){return s.trim();});
+    else if (k === "E:") cur.e = v;
+  });
+  return qs;
+}
+
+var TOPICS = [
+  {id:"deriv",  name:"Производные",           desc:"Вся таблица и правила дифференцирования"},
+  {id:"growth", name:"Скорость роста",        desc:"Что растёт быстрее на бесконечности"},
+  {id:"lim",    name:"Устные пределы",        desc:"Считаются в уме за пару секунд"},
+  {id:"rem",    name:"Замечательные пределы", desc:"Оба предела и эквивалентности при x → 0"},
+  {id:"circle", name:"Единичная окружность",  desc:"Значения, знаки, обратные функции"}
+];
+function topicName(id){
+  for (var i=0;i<TOPICS.length;i++) if (TOPICS[i].id===id) return TOPICS[i].name;
+  return "";
+}
+
+var QS = [];
+
+function shuffle(a){
+  for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+
+var CHEV_R = '<svg viewBox="0 0 9 16" aria-hidden="true"><path d="M1 1l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>';
+var CHEV_L = '<svg viewBox="0 0 8 14" aria-hidden="true"><path d="M7 1L1 7l6 6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>';
+
+/* ---------- state ---------- */
+var state = {view:"practice", screen:"home", quiz:null, scroll:{practice:0, theory:0}};
+var $practice, $theoryBody;
+
+function setView(v, skipScroll){
+  if (state.view !== v) state.scroll[state.view] = window.scrollY;
+  state.view = v;
+  document.body.setAttribute("data-view", v);
+  Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function(b){
+    b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false");
+  });
+  if (!skipScroll) window.scrollTo(0, state.scroll[v] || 0);
+  if (v === "theory") spy();
+}
+
+/* ---------- practice ---------- */
+function renderHome(){
+  var total = QS.length;
+  var h = '';
+  h += '<div class="intro"><h1>Тренажёр по матанализу</h1>';
+  h += '<p class="lead">' + total + ' вопросов с вариантами ответа. Выберите тему или пройдите всё подряд в марафоне. Теория открывается вкладкой сверху в любой момент.</p></div>';
+  h += '<button class="marathon" data-act="marathon"><span><span class="row-title">Марафон</span><span class="row-desc">Все ' + total + ' вопросов вперемешку</span></span><span class="row-end">' + total + CHEV_R + '</span></button>';
+  h += '<h2 class="list-h">Темы</h2><div class="list">';
+  TOPICS.forEach(function(t){
+    var n = QS.filter(function(q){return q.t===t.id;}).length;
+    h += '<button class="row" data-act="topic" data-topic="' + t.id + '"><span><span class="row-title">' + esc(t.name) + '</span><span class="row-desc">' + esc(t.desc) + '</span></span><span class="row-end">' + n + CHEV_R + '</span></button>';
+  });
+  h += '</div>';
+  $practice.innerHTML = h;
+}
+
+function startQuiz(mode, title, list){
+  state.quiz = {
+    mode: mode, title: title, i: 0,
+    items: shuffle(list.slice()).map(function(q){
+      return {q:q, opts:shuffle([q.a].concat(q.w)), chosen:null, revealed:false, ok:false};
+    })
+  };
+  state.screen = "quiz";
+  renderPractice();
+  window.scrollTo(0,0);
+}
+
+function renderQuiz(){
+  var z = state.quiz, it = z.items[z.i], q = it.q;
+  var answered = it.chosen !== null;
+  var n = z.items.length;
+  var h = '';
+  h += '<div class="qtop"><button class="back" data-act="home">' + CHEV_L + 'Темы</button><span class="counter">' + (z.i+1) + ' / ' + n + '</span></div>';
+  h += '<div class="bar"><i style="width:' + ((z.i + (answered?1:0)) / n * 100).toFixed(2) + '%"></i></div>';
+  h += '<div class="qmeta">' + esc(topicName(q.t)) + '</div>';
+  h += '<div class="qtext">' + rich(q.q, true) + '</div>';
+  h += '<div class="opts">';
+  it.opts.forEach(function(o, k){
+    var cls = "opt";
+    var isRight = o === q.a;
+    if (answered){
+      if (k === it.chosen) cls += it.ok ? " correct" : " wrong";
+      else if (it.revealed && isRight) cls += " correct";
+      else cls += " dim";
+    }
+    h += '<button class="' + cls + '" data-act="pick" data-k="' + k + '"' + (answered ? ' disabled' : '') + '><span class="k">' + (k+1) + '</span><span class="ov">' + rich(o, true) + '</span></button>';
+  });
+  h += '</div>';
+  var v = '';
+  if (it.chosen === -1) v = '<div class="verdict skip">Ответ показан</div>';
+  else if (answered) v = it.ok ? '<div class="verdict ok">Верно</div>' : '<div class="verdict bad">Неверно</div>';
+  else v = '<div class="verdict"></div>';
+  h += v;
+  if (it.revealed){
+    h += '<div class="expl"><div class="expl-ans">Ответ: ' + rich(q.a, true) + '</div>';
+    if (q.e) h += '<p>' + rich(q.e, true) + '</p>';
+    h += '<button class="link" data-act="theory" data-topic="' + q.t + '">Теория по теме</button></div>';
+  }
+  var last = z.i === n - 1;
+  h += '<div class="actions">';
+  h += '<button class="btn ghost" data-act="reveal">' + (it.revealed ? 'Скрыть ответ' : 'Показать ответ') + '</button>';
+  h += '<button class="btn primary" data-act="next" id="btn-next">' + (last ? 'Завершить' : 'Дальше') + '</button>';
+  h += '</div>';
+  $practice.innerHTML = h;
+}
+
+function renderResult(){
+  var z = state.quiz, n = z.items.length;
+  var good = z.items.filter(function(it){return it.ok;}).length;
+  var bad = n - good;
+  var pct = Math.round(good / n * 100);
+  var h = '';
+  h += '<div class="qtop"><button class="back" data-act="home">' + CHEV_L + 'Темы</button><span class="counter">' + esc(z.title) + '</span></div>';
+  h += '<div class="score">' + good + '<span>/ ' + n + '</span></div>';
+  h += '<p class="lead">' + pct + '% верных ответов. ' + (bad ? 'Ошибки и пропуски можно пройти отдельно.' : 'Без единой ошибки.') + '</p>';
+  var groups = {};
+  z.items.forEach(function(it){
+    var g = groups[it.q.t] || (groups[it.q.t] = {n:0, ok:0});
+    g.n++; if (it.ok) g.ok++;
+  });
+  var keys = TOPICS.filter(function(t){return groups[t.id];});
+  if (keys.length > 1){
+    h += '<div class="bd">';
+    keys.forEach(function(t){
+      var g = groups[t.id];
+      h += '<div class="bd-row"><b>' + esc(t.name) + '</b><span>' + g.ok + ' / ' + g.n + '</span><div class="bd-bar"><i style="width:' + (g.ok/g.n*100).toFixed(1) + '%"></i></div></div>';
+    });
+    h += '</div>';
+  }
+  h += '<div class="actions">';
+  if (bad) h += '<button class="btn primary" data-act="retry">Повторить ошибки (' + bad + ')</button>';
+  h += '<button class="btn ' + (bad ? 'ghost' : 'primary') + '" data-act="again">Пройти заново</button>';
+  h += '<button class="btn ghost" data-act="home">К темам</button>';
+  h += '</div>';
+  $practice.innerHTML = h;
+}
+
+function renderPractice(){
+  if (state.screen === "quiz") renderQuiz();
+  else if (state.screen === "result") renderResult();
+  else renderHome();
+}
+
+function pick(k){
+  var z = state.quiz, it = z.items[z.i];
+  if (it.chosen !== null) return;
+  it.chosen = k;
+  it.ok = it.opts[k] === it.q.a;
+  renderQuiz();
+  var nb = document.getElementById("btn-next"); if (nb) nb.focus({preventScroll:true});
+}
+function next(){
+  var z = state.quiz;
+  if (z.i < z.items.length - 1){
+    z.i++;
+    renderQuiz();
+    var top = $practice.getBoundingClientRect().top + window.scrollY - 64;
+    if (window.scrollY > top) window.scrollTo(0, Math.max(0, top));
+  } else {
+    state.screen = "result";
+    renderResult();
+    window.scrollTo(0,0);
+  }
+}
+
+function onPracticeClick(e){
+  var el = e.target.closest("[data-act]");
+  if (!el || !$practice.contains(el)) return;
+  var act = el.getAttribute("data-act");
+  var z = state.quiz;
+  if (act === "marathon") startQuiz("marathon", "Марафон", QS);
+  else if (act === "topic"){
+    var id = el.getAttribute("data-topic");
+    startQuiz("topic", topicName(id), QS.filter(function(q){return q.t===id;}));
+  }
+  else if (act === "home"){ state.screen = "home"; state.quiz = null; renderHome(); window.scrollTo(0,0); }
+  else if (act === "pick") pick(+el.getAttribute("data-k"));
+  else if (act === "reveal"){
+    var it = z.items[z.i];
+    it.revealed = !it.revealed;
+    if (it.chosen === null){ it.chosen = -1; it.ok = false; }
+    renderQuiz();
+  }
+  else if (act === "next") next();
+  else if (act === "retry"){
+    var wrong = z.items.filter(function(it){return !it.ok;}).map(function(it){return it.q;});
+    startQuiz("retry", "Работа над ошибками", wrong);
+  }
+  else if (act === "again"){
+    startQuiz(z.mode, z.title, z.items.map(function(it){return it.q;}));
+  }
+  else if (act === "theory"){
+    setView("theory", true);
+    var sec = document.getElementById("th-" + el.getAttribute("data-topic"));
+    if (sec) sec.scrollIntoView();
+    spy();
+  }
+}
+
+function onKey(e){
+  if (state.view !== "practice" || state.screen !== "quiz") return;
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  var z = state.quiz, it = z.items[z.i];
+  if (/^[1-4]$/.test(e.key)){
+    var k = +e.key - 1;
+    if (k < it.opts.length && it.chosen === null){ e.preventDefault(); pick(k); }
+  } else if (e.key === "Enter"){
+    var tag = (document.activeElement && document.activeElement.tagName) || "";
+    if (tag === "BUTTON") return; // native click handles it
+    e.preventDefault(); next();
+  }
+}
+
+/* ---------- theory ---------- */
+function renderMathIn(root){
+  var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  var nodes = [];
+  while (walker.nextNode()){
+    if (walker.currentNode.nodeValue.indexOf("$") !== -1) nodes.push(walker.currentNode);
+  }
+  nodes.forEach(function(n){
+    var ds = !!(n.parentElement && n.parentElement.closest(".ds"));
+    var parts = n.nodeValue.split("$$");
+    var html = parts.map(function(p, i){
+      if (i % 2) return tex(p.trim(), true);
+      return rich(p, ds);
+    }).join("");
+    var tmp = document.createElement("span");
+    tmp.innerHTML = html;
+    var frag = document.createDocumentFragment();
+    while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+    n.parentNode.replaceChild(frag, n);
+  });
+}
+
+var chips = [];
+function spy(){
+  if (state.view !== "theory") return;
+  var cur = null;
+  document.querySelectorAll(".tsec").forEach(function(s){
+    if (s.getBoundingClientRect().top < 140) cur = s.id;
+  });
+  if (!cur) cur = "th-deriv";
+  if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) cur = "th-circle";
+  chips.forEach(function(c){
+    var on = c.getAttribute("data-go") === cur;
+    if (on !== c.classList.contains("on")){
+      c.classList.toggle("on", on);
+      if (on && c.scrollIntoView) c.parentNode.scrollTo({left: c.offsetLeft - 16, behavior: "smooth"});
+    }
+  });
+}
+
+/* ---------- unit circle ---------- */
+var UC = {
+  rad: ["0","\\frac{\\pi}{6}","\\frac{\\pi}{4}","\\frac{\\pi}{3}","\\frac{\\pi}{2}","\\frac{2\\pi}{3}","\\frac{3\\pi}{4}","\\frac{5\\pi}{6}","\\pi","\\frac{7\\pi}{6}","\\frac{5\\pi}{4}","\\frac{4\\pi}{3}","\\frac{3\\pi}{2}","\\frac{5\\pi}{3}","\\frac{7\\pi}{4}","\\frac{11\\pi}{6}"],
+  lbl: ["0","π/6","π/4","π/3","π/2","2π/3","3π/4","5π/6","π","7π/6","5π/4","4π/3","3π/2","5π/3","7π/4","11π/6"],
+  deg: [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330],
+  sin: ["0","h","r2","r3","1","r3","r2","h","0","-h","-r2","-r3","-1","-r3","-r2","-h"],
+  cos: ["1","r3","r2","h","0","-h","-r2","-r3","-1","-r3","-r2","-h","0","h","r2","r3"],
+  tg:  ["0","i","1","R","x","-R","-1","-i","0","i","1","R","x","-R","-1","-i"],
+  ctg: ["x","R","1","i","0","-i","-1","-R","x","R","1","i","0","-i","-1","-R"],
+  sel: 1
+};
+var UV = {"0":"0","1":"1","-1":"-1","h":"\\frac{1}{2}","-h":"-\\frac{1}{2}","r2":"\\frac{\\sqrt{2}}{2}","-r2":"-\\frac{\\sqrt{2}}{2}","r3":"\\frac{\\sqrt{3}}{2}","-r3":"-\\frac{\\sqrt{3}}{2}","R":"\\sqrt{3}","-R":"-\\sqrt{3}","i":"\\frac{\\sqrt{3}}{3}","-i":"-\\frac{\\sqrt{3}}{3}"};
+
+function ucVal(code){
+  if (code === "x") return '<span class="nd">не определён</span>';
+  return tex("\\displaystyle " + UV[code]);
+}
+
+function drawCircle(){
+  var C = 180, R = 118, i = UC.sel;
+  function P(a, r){ return [C + r*Math.cos(a), C - r*Math.sin(a)]; }
+  function f(n){ return n.toFixed(2); }
+  var a = UC.deg[i] * Math.PI / 180;
+  var p = P(a, R);
+  var s = '<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Единичная окружность">';
+  s += '<line class="ax" x1="52" y1="180" x2="308" y2="180"/><line class="ax" x1="180" y1="52" x2="180" y2="308"/>';
+  s += '<circle class="cir" cx="180" cy="180" r="' + R + '"/>';
+  // projections
+  s += '<line class="proj" x1="' + f(p[0]) + '" y1="' + f(p[1]) + '" x2="' + f(p[0]) + '" y2="180"/>';
+  s += '<line class="proj" x1="' + f(p[0]) + '" y1="' + f(p[1]) + '" x2="180" y2="' + f(p[1]) + '"/>';
+  // cos & sin segments on axes
+  if (Math.abs(p[0]-C) > 1){
+    s += '<line class="sg" x1="180" y1="180" x2="' + f(p[0]) + '" y2="180"/>';
+    s += '<text class="slbl" x="' + f((C+p[0])/2) + '" y="' + (p[1] > C ? 172 : 196) + '" text-anchor="middle">cos</text>';
+  }
+  if (Math.abs(p[1]-C) > 1){
+    s += '<line class="sg" x1="180" y1="180" x2="180" y2="' + f(p[1]) + '"/>';
+    var lx = p[0] >= C ? 172 : 188;
+    s += '<text class="slbl" x="' + lx + '" y="' + f((C+p[1])/2) + '" text-anchor="' + (p[0] >= C ? 'end' : 'start') + '" dominant-baseline="middle">sin</text>';
+  }
+  s += '<line class="rad" x1="180" y1="180" x2="' + f(p[0]) + '" y2="' + f(p[1]) + '"/>';
+  if (a > 0){
+    var e = P(a, 26);
+    s += '<path class="arc" d="M206 180 A26 26 0 ' + (a > Math.PI ? 1 : 0) + ' 0 ' + f(e[0]) + ' ' + f(e[1]) + '"/>';
+  }
+  for (var k = 0; k < 16; k++){
+    var ak = UC.deg[k] * Math.PI / 180, q = P(ak, R), l = P(ak, 146);
+    var cs = Math.cos(ak), anchor = cs > 0.3 ? "start" : (cs < -0.3 ? "end" : "middle");
+    s += '<text class="lbl' + (k===i ? ' on' : '') + '" x="' + f(l[0]) + '" y="' + f(l[1]) + '" text-anchor="' + anchor + '" dominant-baseline="middle">' + UC.lbl[k] + '</text>';
+    s += '<g class="pt" data-i="' + k + '" tabindex="0" role="button" aria-label="Угол ' + UC.lbl[k] + '" aria-pressed="' + (k===i) + '"><circle class="hit" cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="15"/><circle class="dot" cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="4"/></g>';
+  }
+  s += '<circle class="reddot" cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="7"/>';
+  s += '</svg>';
+  return s;
+}
+
+function renderCircle(keepFocus){
+  var fig = document.getElementById("uc-fig"), out = document.getElementById("uc-out");
+  if (!fig) return;
+  fig.innerHTML = drawCircle();
+  var i = UC.sel, d = UC.deg[i];
+  var quarter = d % 90 === 0 ? "на оси" : ["I","II","III","IV"][Math.floor(d/90)] + " четверть";
+  var h = '<div class="uc-angle">' + tex("\\alpha=" + UC.rad[i]) + '<span class="muted">' + d + '°, ' + quarter + '</span></div>';
+  h += '<div class="uc-vals">';
+  h += '<div><span class="lb">sin α</span><span class="vl">' + ucVal(UC.sin[i]) + '</span></div>';
+  h += '<div><span class="lb">cos α</span><span class="vl">' + ucVal(UC.cos[i]) + '</span></div>';
+  h += '<div><span class="lb">tg α</span><span class="vl">' + ucVal(UC.tg[i]) + '</span></div>';
+  h += '<div><span class="lb">ctg α</span><span class="vl">' + ucVal(UC.ctg[i]) + '</span></div>';
+  h += '</div>';
+  h += '<div class="uc-step"><button class="btn ghost" data-step="-1">Предыдущий угол</button><button class="btn ghost" data-step="1">Следующий угол</button></div>';
+  out.innerHTML = h;
+  if (keepFocus){
+    var g = fig.querySelector('.pt[data-i="' + i + '"]');
+    if (g && g.focus) g.focus({preventScroll:true});
+  }
+}
+
+function initCircle(){
+  var fig = document.getElementById("uc-fig"), out = document.getElementById("uc-out");
+  fig.addEventListener("click", function(e){
+    var g = e.target.closest(".pt"); if (!g) return;
+    UC.sel = +g.getAttribute("data-i"); renderCircle(false);
+  });
+  fig.addEventListener("keydown", function(e){
+    var g = e.target.closest && e.target.closest(".pt");
+    if (!g) return;
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); UC.sel = +g.getAttribute("data-i"); renderCircle(true); }
+    else if (e.key === "ArrowRight" || e.key === "ArrowUp"){ e.preventDefault(); UC.sel = (UC.sel + 1) % 16; renderCircle(true); }
+    else if (e.key === "ArrowLeft" || e.key === "ArrowDown"){ e.preventDefault(); UC.sel = (UC.sel + 15) % 16; renderCircle(true); }
+  });
+  out.addEventListener("click", function(e){
+    var b = e.target.closest("[data-step]"); if (!b) return;
+    UC.sel = (UC.sel + 16 + (+b.getAttribute("data-step"))) % 16; renderCircle(false);
+  });
+  renderCircle(false);
+}
+
+/* ---------- init ---------- */
+function init(){
+  HAS_KATEX = typeof window.katex !== "undefined";
+  if (!HAS_KATEX){
+    document.getElementById("warn").innerHTML = '<div class="warn">Формулы не загрузились: при первом открытии нужен интернет. Пока они показаны в виде кода.</div>';
+  }
+  QS = parseBank(document.getElementById("bank").textContent);
+  $practice = document.getElementById("practice");
+  $theoryBody = document.getElementById("theory-body");
+
+  renderMathIn($theoryBody);
+  initCircle();
+  renderHome();
+
+  document.querySelector(".seg").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-view]"); if (!b) return;
+    setView(b.getAttribute("data-view"));
+  });
+  $practice.addEventListener("click", onPracticeClick);
+  document.addEventListener("keydown", onKey);
+
+  chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  chips.forEach(function(c){
+    c.addEventListener("click", function(){
+      var sec = document.getElementById(c.getAttribute("data-go"));
+      if (sec) sec.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+    });
+  });
+  var ticking = false;
+  window.addEventListener("scroll", function(){
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function(){ ticking = false; spy(); });
+  }, {passive:true});
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+else init();
+})();
+</script>
+</body>
+</html>
