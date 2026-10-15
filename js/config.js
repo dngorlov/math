@@ -2,7 +2,7 @@
 export const CONFIG = {
   BRAND: '!¡ матан',
   // Адрес Cloudflare Worker
-  API_BASE: 'https://https://matan-api.matan444ik.workers.dev',
+  API_BASE: 'https://matan-api.matan444ik.workers.dev',
   // Username бота без 
   BOT_USERNAME: 'matan444ik_trainbot',
   // Короткое имя Mini App из @BotFather (/newapp): ссылка 
