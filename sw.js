@@ -1,6 +1,6 @@
 // Service worker: сайт открывается без интернета после первого визита.
 // При изменении файлов увеличь VERSION — старый кэш удалится.
-const VERSION = 'v6';
+const VERSION = 'v7';
 const SHELL = 'shell-' + VERSION;
 const RUNTIME = 'runtime-' + VERSION;
 const ASSETS = [
