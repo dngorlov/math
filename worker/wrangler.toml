@@ -11,7 +11,7 @@ SITE_URL = "https://corsid.site/"
 BOT_USERNAME = "matan444ik_trainbot"
 APP_NAME = "app"
 # Telegram ID преподавателей через запятую: им видна статистика интенсива
-ADMIN_IDS = ""
+ADMIN_IDS = "680161649"
 
 [[d1_databases]]
 binding = "DB"
