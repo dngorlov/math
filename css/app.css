@@ -106,12 +106,14 @@ main > section:not([hidden]) { animation: viewIn .45s var(--ease); }
 .bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--red); transition: width .5s var(--ease); }
 .qmeta { color: var(--muted); font-size: 14px; margin: 22px 0 6px; }
-.qtext { font-size: 21px; line-height: 1.5; margin: 0 0 22px; overflow-x: auto; overflow-y: hidden; padding: 2px 0; animation: qIn .45s var(--ease); }
+.qtext { font-size: 21px; line-height: 1.5; margin: 0 0 22px; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.qtext.fresh { animation: qIn .45s var(--ease); }
 @keyframes qIn { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
 .qtext .katex { font-size: 1.12em; }
 .opts { display: grid; grid-template-columns: 1fr; gap: 10px; }
 @media (min-width: 600px) { .opts { grid-template-columns: 1fr 1fr; } .opt { font-size: 20px; } }
-.opt { display: flex; align-items: center; gap: 12px; text-align: left; background: var(--s1); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; min-height: 66px; font-size: 18px; cursor: pointer; overflow-x: auto; transition: border-color .25s var(--ease), background-color .25s var(--ease), opacity .3s, transform .15s var(--ease); animation: optIn .5s var(--ease) backwards; }
+.opt { display: flex; align-items: center; gap: 12px; text-align: left; background: var(--s1); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; min-height: 66px; font-size: 18px; cursor: pointer; overflow-x: auto; transition: border-color .25s var(--ease), background-color .25s var(--ease), opacity .3s, transform .15s var(--ease); }
+.opts.fresh .opt { animation: optIn .5s var(--ease) backwards; }
 .opt:nth-child(2) { animation-delay: .04s; } .opt:nth-child(3) { animation-delay: .08s; } .opt:nth-child(4) { animation-delay: .12s; }
 @keyframes optIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .opt:active:not(:disabled) { transform: scale(.985); }
@@ -243,7 +245,7 @@ main > section:not([hidden]) { animation: viewIn .45s var(--ease); }
 .mark-svg [data-r="dg"], .mark-svg .fl, .mark-svg .ring-g { transform-box: view-box; transform-origin: 0 0; }
 .mark-svg .dsq { transform-box: fill-box; transform-origin: 50% 50%; }
 .mark-svg .ring-g circle { transform-box: fill-box; transform-origin: 50% 50%; }
-.mark-svg .markg { transform-box: view-box; transform-origin: 512px 512px; }
+.mark-svg .markg { transform-box: view-box; transform-origin: 320px 512px; }
 .mark-svg .bnum { fill: #fff; font-family: var(--font); transform-box: fill-box; transform-origin: 50% 50%; }
 .mark-svg .num { fill: #000; font-family: var(--font); transform-box: fill-box; transform-origin: 50% 50%; transition: fill .6s; }
 .mark-svg[data-stage="4"] .num, .mark-svg[data-stage="5"] .num { fill: #fff; }
@@ -456,3 +458,21 @@ main > section:not([hidden]) { animation: viewIn .45s var(--ease); }
 .btn.danger:hover { background: #e00000; }
 /* В Telegram «Назад» — системная кнопка, свою прячем */
 .in-telegram .back { visibility: hidden; }
+
+/* ---------- объявления ---------- */
+.goal-wrap { max-width: 760px; margin: 10px auto 0; padding: 0 16px; }
+.goal { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; background: var(--s1); border: 1px solid var(--line); border-left: 3px solid var(--red); border-radius: 12px; padding: 11px 14px; cursor: pointer; font-size: 15px; transition: border-color .2s; }
+.goal:hover { border-color: #444; border-left-color: var(--red); }
+.goal-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex: none; animation: pulse 1.6s ease-in-out infinite; }
+.goal-txt { min-width: 0; }
+.post { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.post h3 { margin: 6px 0 4px; font-size: 18px; color: var(--text); }
+.post p { margin: 6px 0; line-height: 1.6; }
+.post-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.post-goal { color: var(--red-text); font-weight: 600; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.goal-tag { border-color: var(--red); color: var(--red-text); }
+.new-tag { background: #f0f0f0; color: #000; border-color: #f0f0f0; }
+.post-text { width: 100%; background: #0b0b0b; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; resize: vertical; font-size: 16px; }
+.adm-post { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.acct-news { width: 100%; margin: 6px 0 4px; }

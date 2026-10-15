@@ -41,7 +41,7 @@ export function leaveDuel() {
 /* ---------- вход в дуэль ---------- */
 function renderIntro() {
   let h = '<div class="page-head"><h1>Дуэль 1 на 1</h1><p class="lead">60 секунд, одинаковые устные задачи у обоих. Верный ответ +10, неверный −5. Побеждает тот, у кого больше очков. Каждый верный ответ идёт в серию дня.</p></div>';
-  if (!apiEnabled()) h += '<div class="empty"><h2>Дуэли пока недоступны</h2><p>Нужен сервер: см. <code>docs/SETUP_GUIDE.md</code>.</p></div>';
+  if (!apiEnabled()) h += '<div class="empty"><h2>Дуэли пока недоступны</h2><p>Загляни чуть позже.</p></div>';
   else if (!signedIn()) h += '<div class="empty"><h2>Нужен вход через Telegram</h2><p>Соперник увидит твоё имя и аватар.' + (pendingCode ? ' После входа нажми «Войти» рядом с кодом ' + esc(pendingCode) + '.' : '') + '</p></div><button class="btn primary big" data-d="login">Войти</button>';
   else {
     h += '<button class="btn primary big" data-d="create">Создать дуэль</button>' +
@@ -161,7 +161,7 @@ function renderTask() {
   if (!box || !tasks || now() < room.startAt || now() > room.endAt) return;
   const t = tasks[myIdx];
   if (!t) { box.innerHTML = '<p class="muted">Задачи закончились — жди конца раунда.</p>'; return; }
-  box.innerHTML = '<div class="qtext">' + rich(t.q, true) + '</div><div class="opts">' +
+  box.innerHTML = '<div class="qtext fresh">' + rich(t.q, true) + '</div><div class="opts fresh">' +
     t.opts.map((o, k) => '<button class="opt" data-d="pick" data-k="' + k + '"><span class="k">' + (k + 1) + '</span><span class="ov">' + rich(o, true) + '</span></button>').join('') + '</div>';
 }
 

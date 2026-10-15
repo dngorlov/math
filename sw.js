@@ -1,13 +1,13 @@
 // Service worker: сайт открывается без интернета после первого визита.
 // При изменении файлов увеличь VERSION — старый кэш удалится.
-const VERSION = 'v7';
+const VERSION = 'v20';
 const SHELL = 'shell-' + VERSION;
 const RUNTIME = 'runtime-' + VERSION;
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/app.js', 'js/config.js', 'js/math.js', 'js/tg.js', 'js/storage.js', 'js/ui.js', 'js/streak.js', 'js/streak-ui.js',
   'js/mark.js', 'js/practice.js', 'js/endless.js', 'js/answer.js', 'js/theory.js', 'js/graphs.js', 'js/rating.js', 'js/report.js',
-  'js/haptics.js', 'js/api.js', 'js/sync.js', 'js/merge.js', 'js/account.js', 'js/duel.js', 'js/admin.js', 'js/stats.js', 'js/gen/kinds.js', 'js/pair.js',
+  'js/haptics.js', 'js/api.js', 'js/sync.js', 'js/merge.js', 'js/account.js', 'js/duel.js', 'js/admin.js', 'js/stats.js', 'js/gen/kinds.js', 'js/pair.js', 'js/news.js',
   'js/gen/index.js', 'js/gen/util.js', 'js/gen/oral.js', 'js/gen/written.js',
   'data/bank.txt', 'views/theory.html',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/favicon-64.png',

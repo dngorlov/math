@@ -22,11 +22,10 @@ function pulse(style) {
 // Одиночная вибрация
 export function tap(style = 'medium') { if (enabled) pulse(style); }
 
-// Ритмы: [задержка мс, сила]. Первая доля совпадает с ударом палочки по точке.
+// Ритмы: [задержка мс, сила]. Удар палочки по точке — отдельная одиночная вибрация (mark.js → strike).
 const RHYTHMS = {
-  strike: [[0, 'heavy']],                                                         // обычный удар (дни 2–4)
-  start: [[0, 'heavy'], [140, 'light'], [260, 'medium']],                         // серия началась
-  fire: [[0, 'heavy'], [160, 'light'], [300, 'light'], [440, 'medium'], [620, 'heavy'], [900, 'heavy']], // точка → огонь
+  start: [[140, 'light'], [260, 'medium']],                                       // серия началась (после удара)
+  fire: [[160, 'light'], [300, 'light'], [440, 'medium'], [620, 'heavy'], [900, 'heavy']], // точка → искра (после удара)
   flare: [[0, 'medium'], [180, 'heavy']],                                         // огонь разгорается утром
   stage: [[0, 'light'], [110, 'light'], [220, 'medium'], [340, 'medium'], [480, 'heavy'], [760, 'heavy']], // новая ступень
   freeze: [[0, 'light'], [70, 'light'], [140, 'light'], [210, 'light'], [400, 'rigid']], // хруст льда

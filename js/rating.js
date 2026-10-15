@@ -2,15 +2,16 @@
 // Сортировка только по лучшему счёту в генераторе; серия показывается рядом.
 import { CONFIG } from './config.js';
 import { esc } from './math.js';
-import { apiEnabled, signedIn, request, me } from './api.js';
+import { apiEnabled, signedIn, request, me, NO_NET, DOWN } from './api.js';
 import { daysWord } from './streak-ui.js';
 
 export const ratingEnabled = apiEnabled;
 export const canSubmit = signedIn;
 
 export async function fetchTop(limit = 100) {
-  const r = await fetch(CONFIG.API_BASE.replace(/\/$/, '') + '/api/top?limit=' + limit);
-  if (!r.ok) throw new Error('Сервер ответил ' + r.status);
+  let r;
+  try { r = await fetch(CONFIG.API_BASE.replace(/\/$/, '') + '/api/top?limit=' + limit); } catch (e) { throw new Error(NO_NET); }
+  if (!r.ok) throw new Error(DOWN);
   return r.json();
 }
 
@@ -24,7 +25,7 @@ export async function renderRating(root) {
   const self = me();
   let h = '<div class="page-head"><h1>Рейтинг</h1><p class="lead">Сортировка по лучшему счёту в генераторе. Рядом — текущая серия дней.</p></div>';
   if (!ratingEnabled()) {
-    root.innerHTML = h + '<div class="empty"><h2>Рейтинг ещё не подключён</h2><p>Нужен сервер на Cloudflare: код лежит в папке <code>worker/</code>, инструкция — в <code>worker/README.md</code>. После запуска впиши адрес в <code>js/config.js</code> → <code>API_BASE</code>.</p></div>';
+    root.innerHTML = h + '<div class="empty"><h2>Рейтинг временно недоступен</h2><p>Загляни чуть позже.</p></div>';
     return;
   }
   if (!self) h += '<p class="note-line">Чтобы попасть в рейтинг, войди через Telegram (значок профиля справа вверху) или открой тренажёр в боте.</p>';
@@ -42,7 +43,7 @@ export async function renderRating(root) {
         '<span class="lb-score">' + Number(u.best_score || 0).toLocaleString('ru-RU') + '</span>' +
       '</li>').join('') + '</ol>';
   } catch (e) {
-    box.innerHTML = '<div class="empty"><h2>Не удалось загрузить рейтинг</h2><p>' + esc(e.message) + '. Проверь интернет и нажми «Обновить».</p></div>';
+    box.innerHTML = '<div class="empty"><h2>Не удалось загрузить рейтинг</h2><p>' + esc(e.message) + '. Нажми «Обновить».</p></div>';
   } finally {
     box.removeAttribute('aria-busy');
   }

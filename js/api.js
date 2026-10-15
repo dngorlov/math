@@ -4,6 +4,8 @@ import { tg, inTelegram } from './tg.js';
 import { load, save } from './storage.js';
 
 export const apiEnabled = () => !!CONFIG.API_BASE;
+export const NO_NET = 'Нет связи с сервером. Проверь интернет и попробуй ещё раз';
+export const DOWN = 'Сервер временно недоступен, попробуй позже';
 const url = (p) => CONFIG.API_BASE.replace(/\/$/, '') + p;
 
 let session = load('session', null); // { token, user, exp }
@@ -28,9 +30,11 @@ export async function request(path, { method = 'GET', body } = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (inTelegram && tg.initData) headers['X-Telegram-Init-Data'] = tg.initData;
   else if (getSession()) headers['Authorization'] = 'Bearer ' + getSession().token;
-  const r = await fetch(url(path), { method, headers, body: body ? JSON.stringify(body) : method === 'GET' ? undefined : '{}' });
+  let r;
+  try { r = await fetch(url(path), { method, headers, body: body ? JSON.stringify(body) : method === 'GET' ? undefined : '{}' }); }
+  catch (err) { const e = new Error(NO_NET); e.status = 0; throw e; }
   const data = await r.json().catch(() => ({}));
   if (r.status === 401 && !inTelegram) setSession(null);
-  if (!r.ok) { const e = new Error(data.error || 'Сервер ответил ' + r.status); e.status = r.status; throw e; }
+  if (!r.ok) { const e = new Error(data.error || (r.status >= 500 ? DOWN : 'Что-то пошло не так, попробуй ещё раз')); e.status = r.status; throw e; }
   return data;
 }

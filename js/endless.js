@@ -99,7 +99,7 @@ function sendAnswer(i, answer) {
   }).catch((e) => {
     if (!g) return;
     g.server = null;
-    g.serverNote = 'Связь с сервером потеряна (' + e.message + ') — забег продолжится, но в рейтинг не попадёт.';
+    g.serverNote = 'Связь с сервером потеряна — забег продолжится, но в рейтинг не попадёт.';
     const n = root.querySelector('#eg-note'); if (n) n.textContent = g.serverNote;
   });
 }
@@ -132,9 +132,9 @@ function renderGame() {
     (g.serverNote ? '<p class="note-line" id="eg-note">' + esc(g.serverNote) + '</p>' : '<p class="note-line" id="eg-note" hidden></p>');
   h += g.mode === 'oral' ? '<div class="bar timer"><i id="eg-timer"></i></div>' : '<div class="bar"><i style="width:0"></i></div>';
   h += '<div class="qmeta">' + esc(topicName(t.topic)) + (g.mode === 'written' ? ' · письменно' : '') + '</div>';
-  h += '<div class="qtext">' + rich(t.q, true) + '</div>';
+  h += '<div class="qtext fresh">' + rich(t.q, true) + '</div>';
   if (g.mode === 'oral') {
-    h += '<div class="opts">' + t.opts.map((o, k) => '<button class="opt" data-act="pick" data-k="' + k + '"><span class="k">' + (k + 1) + '</span><span class="ov">' + rich(o, true) + '</span></button>').join('') + '</div>';
+    h += '<div class="opts fresh">' + t.opts.map((o, k) => '<button class="opt" data-act="pick" data-k="' + k + '"><span class="k">' + (k + 1) + '</span><span class="ov">' + rich(o, true) + '</span></button>').join('') + '</div>';
   } else {
     h += '<div class="ans-row"><input id="ans" class="ans" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Например, 3/2" aria-label="Ответ" aria-describedby="ans-prev">' +
       '<button class="btn primary" data-act="check">Проверить</button></div>' +
@@ -241,7 +241,7 @@ async function over() {
   root.innerHTML = '<p class="muted">Подвожу итоги…</p>';
   await g.pending;
   if (g.server && !g.serverResult) {
-    try { g.serverResult = await request('/api/run/end', { method: 'POST', body: { runId: g.server.runId } }); } catch (e) { g.serverNote = 'Не удалось завершить забег на сервере: ' + e.message; }
+    try { g.serverResult = await request('/api/run/end', { method: 'POST', body: { runId: g.server.runId } }); } catch (e) { g.serverNote = 'Не удалось сохранить результат в рейтинге — нет связи с сервером.'; }
   }
   if (g.serverResult && typeof g.serverResult.score === 'number') g.score = g.serverResult.score;
   const key = 'best_' + g.mode;

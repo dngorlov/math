@@ -12,6 +12,7 @@ import { renderRating } from './rating.js';
 import { initSync } from './sync.js';
 import { initAccount } from './account.js';
 import { initPair } from './pair.js';
+import { initNews, closeNews } from './news.js';
 import { mountDuel, showDuel, leaveDuel, duelKey, duelBack } from './duel.js';
 import { mountAdmin, load as loadStats } from './admin.js';
 import { initReport, closeReport } from './report.js';
@@ -62,7 +63,7 @@ function route() {
 
 function onKey(e) {
   if (e.altKey || e.ctrlKey || e.metaKey) return;
-  if (['sheet', 'fx', 'report', 'acct'].some((id) => !document.getElementById(id).hidden)) return;
+  if (['sheet', 'fx', 'report', 'acct', 'news'].some((id) => !document.getElementById(id).hidden)) return;
   const tag = (e.target && e.target.tagName) || '';
   if (tag === 'TEXTAREA' || (tag === 'INPUT' && e.target.type === 'text')) return;
   const handled = current === 'practice' ? practiceKey(e) : current === 'endless' ? endlessKey(e) : current === 'duel' ? duelKey(e) : false;
@@ -73,12 +74,13 @@ function onKey(e) {
 const isOpen = (id) => !document.getElementById(id).hidden;
 function backAvailable() {
   if (isOpen('fx')) return false; // полноэкранные окна закрываются своими кнопками
-  if (isOpen('sheet') || isOpen('acct') || isOpen('report')) return true;
+  if (isOpen('sheet') || isOpen('acct') || isOpen('report') || isOpen('news')) return true;
   if (current === 'practice') return practiceDeep();
   return true; // из любого другого раздела — назад к темам или в меню раздела
 }
 function goBack() {
   if (isOpen('fx')) return;
+  if (isOpen('news')) return closeNews();
   if (isOpen('report')) return closeReport();
   if (isOpen('acct')) return closeAccount();
   if (isOpen('sheet')) return closeSheet();
@@ -117,6 +119,7 @@ function init() {
   S.startClock();
   initSync();
   initPair();
+  initNews();
 
   view('rating').addEventListener('click', (e) => { if (e.target.closest('[data-act="rating-refresh"]')) renderRating(view('rating')); });
   window.addEventListener('hashchange', route);

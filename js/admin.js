@@ -6,7 +6,7 @@ import { topicName } from './gen/index.js';
 import { toast } from './ui.js';
 
 let root, body, tab = 'stats', params = { days: 30, src: 'all' }, current = null;
-const TABS = [['stats', 'Статистика'], ['user', 'Пользователь'], ['rating', 'Рейтинг']];
+const TABS = [['stats', 'Статистика'], ['posts', 'Объявления'], ['user', 'Пользователь'], ['rating', 'Рейтинг']];
 const SRC = [['all', 'Все режимы'], ['practice', 'Темы и марафон'], ['endless', 'Генератор'], ['duel', 'Дуэли']];
 const DAYS = [[7, '7 дней'], [30, '30 дней'], [0, 'Всё время']];
 const pct = (e, a) => (a ? Math.round((e / a) * 100) : 0);
@@ -16,7 +16,7 @@ export function mountAdmin(el) {
   root.innerHTML = '<div class="page-head"><h1>Админка</h1></div><div class="seg2 adm-tabs" role="tablist">' +
     TABS.map(([id, n]) => '<button role="tab" data-tab="' + id + '">' + n + '</button>').join('') + '</div><div id="adm-body"></div>';
   body = root.querySelector('#adm-body');
-  root.querySelector('.adm-tabs').style.gridTemplateColumns = 'repeat(3, 1fr)';
+  root.querySelector('.adm-tabs').style.gridTemplateColumns = 'repeat(2, 1fr)';
   root.addEventListener('click', onClick);
   root.addEventListener('submit', (e) => e.preventDefault());
 }
@@ -25,6 +25,7 @@ export function load() {
   root.querySelectorAll('[data-tab]').forEach((b) => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   if (tab === 'user') return renderUser();
   if (tab === 'rating') return renderRatingTab();
+  if (tab === 'posts') return renderPosts();
   return loadStats();
 }
 
@@ -40,6 +41,9 @@ async function onClick(e) {
   if (a.dataset.adm === 'find') findUser();
   if (a.dataset.adm === 'save') saveUser(a);
   if (a.dataset.adm === 'reset') resetRating(a);
+  if (a.dataset.adm === 'publish') publish(a);
+  if (a.dataset.adm === 'kind') setKind(a.dataset.v);
+  if (a.dataset.adm === 'del-post') deletePost(a);
 }
 
 /* ---------- пользователь: серия и заморозки ---------- */
@@ -91,6 +95,57 @@ async function saveUser(btn) {
     showUser(current);
     body.querySelector('#adm-saved').textContent = 'Сохранено. Участник увидит изменения при следующем открытии тренажёра.';
   } catch (e) { out.innerHTML = '<span class="err">' + esc(e.message) + '</span>'; btn.disabled = false; }
+}
+
+/* ---------- объявления: обновления и цели ---------- */
+let postKind = 'update';
+function renderPosts() {
+  body.innerHTML = '<p class="lead">Объявление увидят все при следующем открытии тренажёра. Цель (КР, экзамен, дедлайн) ещё и висит баннером с обратным отсчётом до даты.</p>' +
+    '<div class="seg2" role="radiogroup" aria-label="Тип"><button data-adm="kind" data-v="update" role="radio">Обновление</button><button data-adm="kind" data-v="goal" role="radio">Новая цель</button></div>' +
+    '<label class="adm-f"><span>Заголовок</span><input id="post-title" class="ans" maxlength="80" placeholder="Например, КР-2 по пределам"></label>' +
+    '<label class="adm-f" id="post-date-f"><span>Дата цели</span><input id="post-date" class="ans" type="date"></label>' +
+    '<label class="adm-f"><span>Текст</span><textarea id="post-body" class="post-text" rows="6" maxlength="2000" placeholder="Что изменилось или что будет на КР. Пустая строка — новый абзац."></textarea></label>' +
+    '<label class="g-check"><input type="checkbox" id="post-dm"> Разослать в личку через бота</label>' +
+    '<p class="muted small">Рассылка уходит постепенно, около 25 сообщений в минуту. Дойдёт тем, кто разрешил боту писать.</p>' +
+    '<button class="btn primary big" data-adm="publish">Опубликовать</button><p class="small" id="post-out" aria-live="polite"></p>' +
+    '<h2 class="list-h">Опубликованные</h2><div id="post-list"><p class="muted">Загружаю…</p></div>';
+  setKind(postKind);
+  loadPostList();
+}
+function setKind(k) {
+  postKind = k;
+  body.querySelectorAll('[data-adm="kind"]').forEach((b) => { const on = b.dataset.v === k; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+  const f = body.querySelector('#post-date-f'); if (f) f.hidden = k !== 'goal';
+}
+async function loadPostList() {
+  const box = body.querySelector('#post-list');
+  try {
+    const r = await request('/api/posts?fresh=' + Date.now());
+    box.innerHTML = r.posts.length ? r.posts.map((p) => '<div class="adm-post"><div><span class="tag' + (p.kind === 'goal' ? ' goal-tag' : '') + '">' + (p.kind === 'goal' ? 'Цель' : 'Обновление') + '</span> <b>' + esc(p.title) + '</b>' +
+      '<div class="muted small">' + new Date(p.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + (p.goal_date ? ' · дата цели ' + p.goal_date.split('-').reverse().join('.') : '') + '</div></div>' +
+      '<button class="link" data-adm="del-post" data-id="' + p.id + '">Удалить</button></div>').join('') : '<p class="muted">Пока ничего.</p>';
+  } catch (e) { box.innerHTML = '<p class="err">' + esc(e.message) + '</p>'; }
+}
+async function publish(btn) {
+  const out = body.querySelector('#post-out');
+  const title = body.querySelector('#post-title').value.trim();
+  const text = body.querySelector('#post-body').value.trim();
+  const goalDate = body.querySelector('#post-date').value;
+  const dm = body.querySelector('#post-dm').checked;
+  if (!title) { out.innerHTML = '<span class="err">Впиши заголовок</span>'; return; }
+  if (postKind === 'goal' && !goalDate) { out.innerHTML = '<span class="err">Укажи дату цели</span>'; return; }
+  btn.disabled = true; out.textContent = '';
+  try {
+    const r = await request('/api/admin/posts', { method: 'POST', body: { kind: postKind, title, body: text, goalDate: postKind === 'goal' ? goalDate : null, broadcast: dm } });
+    toast('Опубликовано');
+    renderPosts();
+    body.querySelector('#post-out').textContent = 'Опубликовано.' + (dm ? ' В очереди на рассылку: ' + r.queued + '.' : '');
+  } catch (e) { out.innerHTML = '<span class="err">' + esc(e.message) + '</span>'; btn.disabled = false; }
+}
+async function deletePost(btn) {
+  if (!btn.dataset.sure) { btn.dataset.sure = '1'; btn.textContent = 'Точно удалить?'; return; }
+  try { await request('/api/admin/posts/delete', { method: 'POST', body: { id: Number(btn.dataset.id) } }); loadPostList(); toast('Удалено'); }
+  catch (e) { toast(e.message); }
 }
 
 /* ---------- рейтинг: сброс сезона ---------- */
@@ -151,6 +206,6 @@ async function loadStats() {
     box.innerHTML = h;
   } catch (e) {
     box.innerHTML = '<div class="empty"><h2>' + (e.status === 403 ? 'Нет доступа' : 'Не удалось загрузить') + '</h2><p>' +
-      (e.status === 403 ? 'Админка доступна только преподавателям. Добавь свой Telegram ID в ADMIN_IDS на сервере (см. SETUP_GUIDE, шаг 8).' : esc(e.message)) + '</p></div>';
+      (e.status === 403 ? 'Этот раздел доступен только преподавателям.' : esc(e.message)) + '</p></div>';
   }
 }

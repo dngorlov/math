@@ -40,6 +40,7 @@
   </div>
 </header>
 <div id="warn"></div>
+<div id="goal-banner" class="goal-wrap" hidden></div>
 
 <main id="main">
   <section id="view-practice" class="wrap" aria-live="polite"></section>
@@ -81,6 +82,15 @@
   <section class="sheet" role="dialog" aria-modal="true" aria-label="Профиль">
     <div class="sheet-head"><h2>Профиль</h2><button class="sheet-close" aria-label="Закрыть">✕</button></div>
     <div id="acct-body"></div>
+  </section>
+</div>
+
+<!-- Объявления -->
+<div class="sheet-bd" id="news" hidden>
+  <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-title">
+    <div class="sheet-head"><h2 id="news-title">Что нового</h2><button class="sheet-close" aria-label="Закрыть">✕</button></div>
+    <div id="news-body"></div>
+    <button class="btn primary big" data-news-close>Понятно</button>
   </section>
 </div>
 

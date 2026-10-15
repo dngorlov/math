@@ -16,6 +16,7 @@ const TOPICS = [
 const tName = (id) => (TOPICS.find((t) => t.id === id) || {}).name || '';
 
 let QS = [], root, screen = 'home', quiz = null, goTheory = () => {};
+let shownKey = null; // какой вопрос уже показан — анимация появления только для нового
 
 export function parseBank(txt) {
   const qs = []; let topic = null, cur = null;
@@ -40,7 +41,7 @@ export async function mountPractice(el, { onTheory } = {}) {
     const r = await fetch('data/bank.txt');
     QS = parseBank(await r.text());
   } catch (e) {
-    root.innerHTML = '<div class="empty"><h2>Не удалось загрузить вопросы</h2><p>Обнови страницу. Если открываешь файл напрямую с диска, запусти локальный сервер — инструкция в README.</p></div>';
+    root.innerHTML = '<div class="empty"><h2>Не удалось загрузить вопросы</h2><p>Проверь интернет и обнови страницу.</p></div>';
     return;
   }
   root.addEventListener('click', onClick);
@@ -82,6 +83,7 @@ function renderHome() {
 }
 
 function start(mode, title, list) {
+  shownKey = null;
   quiz = { mode, title, i: 0, items: shuffle(list.slice()).map((q) => ({ q, opts: shuffle([q.a].concat(q.w)), chosen: null, revealed: false, ok: false })) };
   screen = 'quiz';
   renderQuiz();
@@ -93,7 +95,10 @@ function renderQuiz() {
   const answered = it.chosen !== null;
   let h = '<div class="qtop"><button class="back" data-act="home">' + CHEV_L + 'Темы</button><span class="counter">' + (z.i + 1) + ' / ' + n + '</span></div>';
   h += '<div class="bar"><i style="width:' + (((z.i + (answered ? 1 : 0)) / n) * 100).toFixed(2) + '%"></i></div>';
-  h += '<div class="qmeta">' + esc(tName(q.t)) + '</div><div class="qtext">' + rich(q.q, true) + '</div><div class="opts">';
+  const key = z.title + '|' + z.i + '|' + q.q;
+  const fresh = key !== shownKey ? ' fresh' : '';
+  shownKey = key;
+  h += '<div class="qmeta">' + esc(tName(q.t)) + '</div><div class="qtext' + fresh + '">' + rich(q.q, true) + '</div><div class="opts' + fresh + '">';
   it.opts.forEach((o, k) => {
     let cls = 'opt';
     if (answered) {

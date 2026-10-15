@@ -8,6 +8,7 @@ import { pull, syncStatus, onSync, mode, settingsChanged } from './sync.js';
 import { hapticsOn, setHaptics, tap } from './haptics.js';
 import { toast } from './ui.js';
 import { refreshPair } from './pair.js';
+import { openNews } from './news.js';
 
 let meInfo = null; // { isAdmin, duels: { wins, losses, draws } } с сервера
 
@@ -37,8 +38,8 @@ function fmtAgo(t) {
 
 function syncLine() {
   const st = syncStatus(), m = mode();
-  if (m === 'server') return st.error ? '<span class="err">Ошибка синхронизации: ' + esc(st.error) + '</span>' : 'Синхронизировано с сервером: ' + fmtAgo(st.at);
-  if (m === 'cloud') return 'Данные хранятся в Telegram и одинаковы на всех твоих устройствах. ' + (apiEnabled() ? '' : 'Сайт подключится после настройки сервера.');
+  if (m === 'server') return st.error ? '<span class="err">Не удалось синхронизировать: ' + esc(st.error) + '</span>' : 'Синхронизировано с сервером: ' + fmtAgo(st.at);
+  if (m === 'cloud') return 'Данные хранятся в Telegram и одинаковы на всех твоих устройствах.';
   return 'Данные хранятся только на этом устройстве.';
 }
 
@@ -53,17 +54,18 @@ function render() {
   let h = '';
   if (u) {
     h += '<div class="acct-user">' + avatar(u, 'ava ava-lg') + '<div><div class="acct-name">' + esc(u.name || 'Без имени') + '</div>' +
-      (u.username ? '<div class="muted">@' + esc(u.username) + '</div>' : '') + '<div class="muted small">' + (u.via === 'telegram' ? 'Вход через Telegram Mini App' : 'Вход через Telegram на сайте') + ' · ID ' + esc(u.id) + '</div></div></div>';
+      (u.username ? '<div class="muted">@' + esc(u.username) + '</div>' : '') + '<div class="muted small">' + 'Вход через Telegram · ID ' + esc(u.id) + '</div></div></div>';
     if (meInfo && meInfo.duels) h += '<p class="small">Дуэли: побед ' + meInfo.duels.wins + ', поражений ' + meInfo.duels.losses + ', ничьих ' + meInfo.duels.draws + '</p>';
     if (meInfo && meInfo.isAdmin) h += '<a class="btn ghost acct-admin" href="#/stats">Админка: статистика, серии, рейтинг</a>';
   } else if (!apiEnabled()) {
-    h += '<p class="muted">Вход и синхронизация заработают, когда будет подключён сервер (<code>API_BASE</code> в <code>js/config.js</code>).</p>';
+    h += '<p class="muted">Вход пока недоступен. Загляни чуть позже.</p>';
   } else if (!CONFIG.BOT_USERNAME) {
-    h += '<p class="muted">Для входа укажи имя бота в <code>js/config.js</code> → <code>BOT_USERNAME</code>.</p>';
+    h += '<p class="muted">Вход пока недоступен. Загляни чуть позже.</p>';
   } else {
     h += '<p>Войди через Telegram, чтобы серия, заморозки и рекорды были одинаковыми на сайте и в боте, а результаты попадали в рейтинг.</p><div id="tg-login" class="tg-login"></div>' +
-      '<p class="muted small">Если кнопка не появилась, у бота не указан домен сайта: в @BotFather команда /setdomain.</p>';
+      '<p class="muted small">Если кнопка входа не появилась, обнови страницу или открой тренажёр через бота в Telegram.</p>';
   }
+  if (apiEnabled()) h += '<button class="btn ghost acct-news" data-a="news">Новости и обновления</button>';
   h += '<h3>Синхронизация</h3><p class="small" id="acct-sync">' + syncLine() + '</p>';
   if (mode() !== 'local') h += '<button class="btn ghost" data-a="sync">Синхронизировать сейчас</button>';
   h += '<h3>Настройки</h3><label class="switch"><input type="checkbox" data-a="haptics"' + (hapticsOn() ? ' checked' : '') + '><span class="sw"></span><span>Вибрация<small>' +
@@ -124,6 +126,7 @@ export function initAccount() {
     const a = e.target.closest('[data-a]');
     if (!a) return;
     if (a.dataset.a === 'sync') { await pull(); render(); toast(syncStatus().error ? 'Не получилось синхронизировать' : 'Синхронизировано'); }
+    if (a.dataset.a === 'news') { close(); setTimeout(() => openNews(false), 300); }
     if (a.dataset.a === 'logout') { setSession(null); renderAccountButton(); refreshPair(); render(); toast('Ты вышел из аккаунта'); }
   });
   bd.addEventListener('change', (e) => {

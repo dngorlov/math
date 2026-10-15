@@ -11,11 +11,11 @@ export const GOAL = CONFIG.STREAK_GOAL;
 export const FREEZES = CONFIG.FREEZES_PER_MONTH;
 
 export const STAGES = [
-  { from: 1, key: 'bang', name: 'Восклицательный знак' },
-  { from: 5, key: 'fire', name: 'Огонёк' },
-  { from: 30, key: 'tri', name: 'Три языка пламени' },
-  { from: 60, key: 'dark', name: 'Тёмное пламя' },
-  { from: 100, key: 'crown', name: 'Тёмная корона' },
+  { from: 1, key: 'bang', name: '!' },
+  { from: 5, key: 'fire', name: 'Искра' },
+  { from: 30, key: 'tri', name: 'Огонь' },
+  { from: 60, key: 'dark', name: 'Пламя' },
+  { from: 100, key: 'crown', name: 'Огнище' },
 ];
 // 0 — не начата, 1 — знак, 2 — огонёк, 3 — три языка, 4 — тёмное, 5 — корона
 export function stageOf(s) {

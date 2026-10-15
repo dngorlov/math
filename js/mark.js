@@ -2,7 +2,7 @@
 // createMark(container) возвращает объект с методами apply() и play*().
 // Холст 1024×1024. Все трансформации — через Web Animations API, поэтому переходы плавные и прерываемые.
 import { stageOf } from './streak.js';
-import { rhythm } from './haptics.js';
+import { rhythm, tap } from './haptics.js';
 
 const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const wait = (ms) => new Promise((r) => setTimeout(r, reduce() ? 0 : ms));
@@ -18,16 +18,16 @@ export const EASE = {
 /* ---------- геометрия ---------- */
 const P = {
   chev: { b1: [517, 314, 45], b2: [517, 709, -45], dot: [715, 512] },
-  bang: { b1: [512, 306, 90], b2: [512, 306, -90], dot: [512, 573] },
+  bang: { b1: [320, 431, 90], b2: [320, 431, -90], dot: [320, 698] },
 };
-const STICK_Y = 306, DOT_BOTTOM = 623;
+const STICK_X = 320, STICK_Y = 431, DOT_Y = 698, DOT_BOTTOM = 748;
 // Масштаб огня по ступеням: композиция всегда влезает в квадрат с запасом
 const FIRE_SCALE = { 2: 2.2, 3: 1.85, 4: 1.85, 5: 1.8 };
 const fireT = (stage, lit) => {
   const s = FIRE_SCALE[stage] || 2.2;
   return 'translate(512px,' + (512 + 150 * s) + 'px) scale(' + (lit ? s : s * 0.9) + ')';
 };
-const FIRE_HIDDEN = 'translate(512px,' + DOT_BOTTOM + 'px) scale(0.15)';
+const FIRE_HIDDEN = 'translate(' + STICK_X + 'px,' + DOT_BOTTOM + 'px) scale(0.15)';
 const barT = ([x, y, a]) => 'translate(' + x + 'px,' + y + 'px) rotate(' + a + 'deg)';
 const dotT = ([x, y], s = 1) => 'translate(' + x + 'px,' + y + 'px) scale(' + s + ')';
 
@@ -59,7 +59,7 @@ const TPL =
     '<g data-r="dg"><g data-r="dsq" class="dsq"><circle class="dot" r="50"/></g></g>' +
     '<rect class="stick" data-r="b1" x="-155" y="-49" width="310" height="98"/>' +
     '<rect class="stick" data-r="b2" x="-155" y="-49" width="310" height="98"/>' +
-    '<text class="bnum" data-r="bnum" x="512" y="880" text-anchor="middle" font-size="250" font-weight="700">1</text>' +
+    '<text class="bnum" data-r="bnum" x="600" y="748" text-anchor="middle" font-size="540" font-weight="700">1</text>' +
   '</g></svg>';
 
 export function createMark(container) {
@@ -103,10 +103,10 @@ export function createMark(container) {
   }
   function data(k, v) { svg.dataset[k] = v; }
 
-  function ring(y, scale, dur = 750) {
+  function ring(y, scale, dur = 750, x = 512) {
     if (reduce()) return;
     const c = el.ring.firstChild;
-    el.ring.style.transform = 'translate(512px,' + y + 'px)';
+    el.ring.style.transform = 'translate(' + x + 'px,' + y + 'px)';
     c.animate([{ transform: 'scale(.4)', opacity: 1, strokeWidth: 10 }, { transform: 'scale(' + scale + ')', opacity: 0, strokeWidth: 1 }],
       { duration: dur, easing: EASE.out });
   }
@@ -150,14 +150,15 @@ export function createMark(container) {
   // Удар палочки по точке; onImpact вызывается в момент касания
   async function strike(onImpact) {
     const kf = (a) => [
-      { transform: barT([512, STICK_Y, a]), easing: EASE.out },
-      { transform: barT([512, STICK_Y - 52, a]), offset: 0.42, easing: EASE.in },
-      { transform: barT([512, STICK_Y + 62, a]), offset: 0.56, easing: EASE.out },
-      { transform: barT([512, STICK_Y - 8, a]), offset: 0.8, easing: EASE.io },
-      { transform: barT([512, STICK_Y, a]) },
+      { transform: barT([STICK_X, STICK_Y, a]), easing: EASE.out },
+      { transform: barT([STICK_X, STICK_Y - 52, a]), offset: 0.42, easing: EASE.in },
+      { transform: barT([STICK_X, STICK_Y + 62, a]), offset: 0.56, easing: EASE.out },
+      { transform: barT([STICK_X, STICK_Y - 8, a]), offset: 0.8, easing: EASE.io },
+      { transform: barT([STICK_X, STICK_Y, a]) },
     ];
     if (!reduce()) { el.b1.animate(kf(90), { duration: 860 }); el.b2.animate(kf(-90), { duration: 860 }); }
     await wait(860 * 0.56);
+    tap('heavy');
     onImpact();
     await wait(860 * 0.44);
   }
@@ -169,7 +170,7 @@ export function createMark(container) {
     const p = P.bang;
     T(el.b1, barT(p.b1), 1100, EASE.io); T(el.b2, barT(p.b2), 1100, EASE.io); T(el.dg, dotT(p.dot), 1100, EASE.io);
     await wait(1250);
-    await strike(() => { data('done', 1); squash(); ring(573, 2.6); rhythm('start'); });
+    await strike(() => { data('done', 1); squash(); ring(DOT_Y, 2.6, 750, STICK_X); rhythm('start'); });
     T(el.bnum, 'translate(0px,60px) scale(.6)'); T(el.bnum, 'translate(0px,0px) scale(1)', 800, EASE.spring); O(el.bnum, 1, 450);
     await wait(700);
     shown = { streak: 1, done: true };
@@ -179,7 +180,7 @@ export function createMark(container) {
   async function playBang(n) {
     data('pose', 'bang'); data('done', 0);
     data('frozen', 0);
-    await strike(() => { data('done', 1); squash(); ring(573, 2.2); flip(el.bnum, n, 70); rhythm('strike'); });
+    await strike(() => { data('done', 1); squash(); ring(DOT_Y, 2.2, 750, STICK_X); flip(el.bnum, n, 70); });
     await wait(300);
     shown = { streak: n, done: true };
   }
@@ -244,10 +245,10 @@ export function createMark(container) {
     const pose = svg.dataset.pose;
     rhythm('freeze');
     data('frozen', 1);
-    const y = pose === 'fire' ? 500 : 573;
+    const y = pose === 'fire' ? 500 : DOT_Y;
     if (!reduce()) {
       el.ring.firstChild.setAttribute('stroke', '#ffffff');
-      ring(y, pose === 'fire' ? 4.2 : 2.6, 900);
+      ring(y, pose === 'fire' ? 4.2 : 2.6, 900, pose === 'fire' ? 512 : STICK_X);
       const target = pose === 'fire' ? el.fl : el.markg;
       target.animate([{ filter: 'none' }, { filter: 'brightness(1.8)' }, { filter: 'none' }], { duration: 700, easing: EASE.out });
       if (pose !== 'fire') squash();
