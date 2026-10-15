@@ -1,0 +1,37 @@
+name = "matan-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Адреса сайта, которым разрешено обращаться к API (через запятую)
+ALLOWED_ORIGINS = "https://corsid.site"
+# Адрес сайта (для кнопок бота), со слешем на конце
+SITE_URL = "https://corsid.site/"
+# Username бота без @ и короткое имя Mini App из /newapp
+BOT_USERNAME = "matan444ik_trainbot"
+APP_NAME = "app"
+# Telegram ID преподавателей через запятую: им видна статистика интенсива
+ADMIN_IDS = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "matan"
+database_id = "006d65cc-8647-466c-8bec-beca7085fe6e"
+
+# Комнаты дуэлей (Durable Objects с SQLite — доступны на бесплатном тарифе)
+[[durable_objects.bindings]]
+name = "DUEL"
+class_name = "DuelRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DuelRoom"]
+
+# Напоминание «огонёк скоро погаснет»: 19:00 UTC = 22:00 МСК
+[triggers]
+crons = ["0 19 * * *"]
+
+# Секреты задаются командами, не в этом файле:
+#   npx wrangler secret put BOT_TOKEN        — токен от @BotFather
+#   npx wrangler secret put WEBHOOK_SECRET   — любая длинная случайная строка
+#   npx wrangler secret put SESSION_SECRET   — ещё одна длинная случайная строка

@@ -1,0 +1,153 @@
+<section class="tsec" id="th-deriv">
+<h2>Производные</h2>
+<p>Таблица основных производных. Здесь $C$ — константа, $\alpha$ — любое число, $a&gt;0,\ a\ne1$.</p>
+<div class="dg ds">
+<div>$(C)'=0$</div>
+<div>$(x^{\alpha})'=\alpha x^{\alpha-1}$</div>
+<div>$(\sqrt{x})'=\frac{1}{2\sqrt{x}}$</div>
+<div>$\left(\frac{1}{x}\right)'=-\frac{1}{x^2}$</div>
+<div>$(a^x)'=a^x\ln a$</div>
+<div>$(e^x)'=e^x$</div>
+<div>$(\log_a x)'=\frac{1}{x\ln a}$</div>
+<div>$(\ln x)'=\frac{1}{x}$</div>
+<div>$(\sin x)'=\cos x$</div>
+<div>$(\cos x)'=-\sin x$</div>
+<div>$(\tg x)'=\frac{1}{\cos^2 x}$</div>
+<div>$(\ctg x)'=-\frac{1}{\sin^2 x}$</div>
+<div>$(\arcsin x)'=\frac{1}{\sqrt{1-x^2}}$</div>
+<div>$(\arccos x)'=-\frac{1}{\sqrt{1-x^2}}$</div>
+<div>$(\arctg x)'=\frac{1}{1+x^2}$</div>
+<div>$(\arcctg x)'=-\frac{1}{1+x^2}$</div>
+<div>$(\sh x)'=\ch x$</div>
+<div>$(\ch x)'=\sh x$</div>
+<div>$(\th x)'=\frac{1}{\ch^2 x}$</div>
+<div>$(\cth x)'=-\frac{1}{\sh^2 x}$</div>
+</div>
+<p class="note">Правило знака: у функций на «ко-» — $\cos x$, $\ctg x$, $\arccos x$, $\arcctg x$ — производная со знаком минус. Гиперболический косинус — исключение: $(\ch x)'=\sh x$, без минуса.</p>
+<p>Гиперболические функции: $\sh x=\frac{e^x-e^{-x}}{2}$, $\ch x=\frac{e^x+e^{-x}}{2}$, $\th x=\frac{\sh x}{\ch x}$, $\cth x=\frac{\ch x}{\sh x}$. Основное тождество: $\ch^2x-\sh^2x=1$.</p>
+<h3>Правила дифференцирования</h3>
+<div class="dg ds">
+<div>$(u\pm v)'=u'\pm v'$</div>
+<div>$(Cu)'=C\,u'$</div>
+<div>$(uv)'=u'v+uv'$</div>
+<div>$\left(\frac{u}{v}\right)'=\frac{u'v-uv'}{v^2}$</div>
+</div>
+<p>Производная сложной функции — производная внешней, умноженная на производную внутренней:</p>
+$$\big(f(g(x))\big)'=f'\big(g(x)\big)\cdot g'(x)$$
+<p>Пример: $(\sin x^2)'=\cos x^2\cdot 2x$, $\ (e^{3x})'=3e^{3x}$.</p>
+</section>
+
+<section class="tsec" id="th-growth">
+<h2>Скорость роста</h2>
+<p>Запись $f\ll g$ означает, что $g$ растёт быстрее: $\frac{f}{g}\to0$. При $x\to+\infty$ (или $n\to\infty$):</p>
+$$\log_a x\ \ll\ x^{\varepsilon}\ \ll\ x^{k}\ \ll\ a^{x}\ \ll\ x!\ \ll\ x^{x}$$
+<p class="muted small">Здесь $\varepsilon&gt;0$ сколь угодно мало, $k$ сколь угодно велико, $a&gt;1$.</p>
+<ul>
+<li>Любая степень логарифма медленнее любой положительной степени: $\frac{\ln^{100}x}{x^{0{,}01}}\to0$.</li>
+<li>Любая степень медленнее любой показательной функции с основанием больше 1: $\frac{n^{1000}}{1{,}001^n}\to0$.</li>
+<li>Факториал обгоняет любую показательную функцию, а $n^n$ обгоняет факториал.</li>
+<li>Среди степеней быстрее та, где больше показатель: $n^2\ll n^3$. Среди показательных — где больше основание: $2^n\ll 3^n$.</li>
+<li>Основание логарифма не влияет на порядок роста: $\log_2 n=\frac{\ln n}{\ln 2}$ отличается от $\ln n$ в постоянное число раз.</li>
+<li>В сумме решает самое быстрое слагаемое: $n^3+2^n\sim 2^n$, $\ n^2+1000n\sim n^2$.</li>
+</ul>
+<p class="note">Как применять: в дроби найдите самое быстрое слагаемое в числителе и в знаменателе и разделите на него всё выражение.</p>
+</section>
+
+<section class="tsec" id="th-lim">
+<h2>Устные пределы</h2>
+<h3>Дробь из многочленов на бесконечности</h3>
+$$\lim_{x\to\infty}\frac{a_kx^k+\ldots}{b_mx^m+\ldots}=\begin{cases}\dfrac{a_k}{b_m}, & k=m\\[6pt] 0, & k\lt m\\[6pt] \infty, & k\gt m\end{cases}$$
+<p>Пример: $\lim\limits_{n\to\infty}\frac{3n^2+n}{5n^2-1}=\frac35$, потому что степени равны.</p>
+<h3>Табличные пределы</h3>
+<div class="dg ds">
+<div>$\lim_{n\to\infty}q^n=0,\ \ |q|&lt;1$</div>
+<div>$\lim_{n\to\infty}\sqrt[n]{a}=1,\ \ a&gt;0$</div>
+<div>$\lim_{n\to\infty}\sqrt[n]{n}=1$</div>
+<div>$\lim_{x\to0^{\pm}}\frac{1}{x}=\pm\infty$</div>
+<div>$\lim_{x\to-\infty}e^{x}=0$</div>
+<div>$\lim_{x\to0^+}\ln x=-\infty$</div>
+<div>$\lim_{x\to\pm\infty}\arctg x=\pm\frac{\pi}{2}$</div>
+<div>$\lim_{x\to0^+}x^x=1$</div>
+</div>
+<h3>Приёмы</h3>
+<ul>
+<li>Ограниченная величина, умноженная на бесконечно малую, — бесконечно малая: $\frac{\sin n}{n}\to0$, $\ x\sin\frac1x\to0$ при $x\to0$.</li>
+<li>Неопределённость $\frac00$ у многочленов — разложить на множители и сократить: $\frac{x^2-4}{x-2}=x+2\to4$.</li>
+<li>Разность корней — домножить на сопряжённое: $\sqrt{n+1}-\sqrt n=\frac{1}{\sqrt{n+1}+\sqrt n}\to0$.</li>
+<li>Сумма первых $n$ натуральных чисел: $1+2+\ldots+n=\frac{n(n+1)}{2}$.</li>
+</ul>
+<p class="note">Неопределённости, которые нельзя посчитать подстановкой: $\frac00,\ \frac\infty\infty,\ 0\cdot\infty,\ \infty-\infty,\ 1^\infty,\ 0^0,\ \infty^0$. А вот $\frac{1}{\infty}=0$ и $\infty+\infty=\infty$ неопределённостями не являются.</p>
+</section>
+
+<section class="tsec" id="th-rem">
+<h2>Замечательные пределы</h2>
+<h3>Первый</h3>
+$$\lim_{x\to0}\frac{\sin x}{x}=1$$
+<h3>Второй</h3>
+$$\lim_{x\to\infty}\left(1+\frac{1}{x}\right)^{x}=e,\qquad \lim_{x\to0}(1+x)^{1/x}=e$$
+<p>Обобщение: $\lim\limits_{x\to\infty}\left(1+\frac{a}{x}\right)^{bx}=e^{ab}$.</p>
+<h3>Эквивалентности при $x\to0$</h3>
+<p>Следствия замечательных пределов. Вместо $x$ может стоять любая бесконечно малая: $\sin 5x\sim 5x$, $\ \ln(1+x^2)\sim x^2$.</p>
+<div class="dg ds">
+<div>$\sin x\sim x$</div>
+<div>$\tg x\sim x$</div>
+<div>$\arcsin x\sim x$</div>
+<div>$\arctg x\sim x$</div>
+<div>$1-\cos x\sim\frac{x^2}{2}$</div>
+<div>$\ln(1+x)\sim x$</div>
+<div>$e^x-1\sim x$</div>
+<div>$a^x-1\sim x\ln a$</div>
+<div>$(1+x)^{\alpha}-1\sim\alpha x$</div>
+</div>
+<p>В произведении и частном бесконечно малые можно заменять эквивалентными: $\frac{\sin 3x}{\sin 2x}\sim\frac{3x}{2x}=\frac32$. В сумме и разности так делать нельзя.</p>
+<h3>Неопределённость $1^\infty$</h3>
+<p>Если $f\to1$ и $g\to\infty$, то</p>
+$$\lim f^{\,g}=e^{\lim g\,(f-1)}$$
+<p>Пример: $\lim\limits_{x\to0}(\cos x)^{1/x^2}=e^{\lim\frac{\cos x-1}{x^2}}=e^{-1/2}$.</p>
+<p class="note">Ловушки: $\lim\limits_{x\to\infty}\frac{\sin x}{x}=0$, потому что $x$ стремится к бесконечности, а не к нулю. И $\left(1+\frac1n\right)^{n^2}\to\infty$: показатель растёт быстрее, чем нужно для числа $e$.</p>
+</section>
+
+<section class="tsec" id="th-circle">
+<h2>Единичная окружность</h2>
+<p>Нажмите на точку, чтобы увидеть значения функций. Угол $\alpha$ отсчитывается от положительного направления оси $Ox$ против часовой стрелки, а точка имеет координаты $(\cos\alpha;\ \sin\alpha)$.</p>
+<div class="uc"><div class="uc-fig" id="uc-fig"></div><div id="uc-out"></div></div>
+<h3>Первая четверть</h3>
+<div class="tw"><table class="tbl ds">
+<tr><th>$\alpha$</th><th>$0$</th><th>$\frac{\pi}{6}$</th><th>$\frac{\pi}{4}$</th><th>$\frac{\pi}{3}$</th><th>$\frac{\pi}{2}$</th></tr>
+<tr><td>$\sin\alpha$</td><td>$0$</td><td>$\frac{1}{2}$</td><td>$\frac{\sqrt2}{2}$</td><td>$\frac{\sqrt3}{2}$</td><td>$1$</td></tr>
+<tr><td>$\cos\alpha$</td><td>$1$</td><td>$\frac{\sqrt3}{2}$</td><td>$\frac{\sqrt2}{2}$</td><td>$\frac{1}{2}$</td><td>$0$</td></tr>
+<tr><td>$\tg\alpha$</td><td>$0$</td><td>$\frac{\sqrt3}{3}$</td><td>$1$</td><td>$\sqrt3$</td><td>—</td></tr>
+<tr><td>$\ctg\alpha$</td><td>—</td><td>$\sqrt3$</td><td>$1$</td><td>$\frac{\sqrt3}{3}$</td><td>$0$</td></tr>
+</table></div>
+<p class="muted small">Синус растёт по ряду $\frac{\sqrt0}{2},\frac{\sqrt1}{2},\frac{\sqrt2}{2},\frac{\sqrt3}{2},\frac{\sqrt4}{2}$, косинус идёт тем же рядом в обратную сторону.</p>
+<h3>Знаки по четвертям</h3>
+<div class="tw"><table class="tbl">
+<tr><th>Четверть</th><th>$\sin$</th><th>$\cos$</th><th>$\tg,\ \ctg$</th></tr>
+<tr><td>I</td><td>+</td><td>+</td><td>+</td></tr>
+<tr><td>II</td><td>+</td><td>−</td><td>−</td></tr>
+<tr><td>III</td><td>−</td><td>−</td><td>+</td></tr>
+<tr><td>IV</td><td>−</td><td>+</td><td>−</td></tr>
+</table></div>
+<h3>Тождества и перевод углов</h3>
+<div class="dg ds">
+<div>$\sin^2\alpha+\cos^2\alpha=1$</div>
+<div>$\tg\alpha\cdot\ctg\alpha=1$</div>
+<div>$1+\tg^2\alpha=\frac{1}{\cos^2\alpha}$</div>
+<div>$1+\ctg^2\alpha=\frac{1}{\sin^2\alpha}$</div>
+<div>$\pi=180^\circ$</div>
+<div>$\alpha_{\text{рад}}=\alpha^\circ\cdot\frac{\pi}{180}$</div>
+</div>
+<p>Чётность: $\cos(-x)=\cos x$, остальные три функции нечётные, например $\sin(-x)=-\sin x$.</p>
+<h3>Формулы приведения</h3>
+<p>Для углов $\pi\pm x$ и $2\pi\pm x$ функция не меняется, для $\frac\pi2\pm x$ и $\frac{3\pi}2\pm x$ меняется на парную: $\sin\leftrightarrow\cos$, $\tg\leftrightarrow\ctg$. Знак ставится тот, который был бы у исходной функции, если считать $x$ острым углом.</p>
+<p>Пример: $\cos\left(\frac\pi2+x\right)$. Косинус меняется на синус, угол лежит во II четверти, косинус там отрицателен, значит $\cos\left(\frac\pi2+x\right)=-\sin x$.</p>
+<h3>Обратные функции</h3>
+<div class="tw"><table class="tbl ds">
+<tr><th>Функция</th><th>Область значений</th></tr>
+<tr><td>$\arcsin x$</td><td>$\left[-\frac{\pi}{2};\ \frac{\pi}{2}\right]$</td></tr>
+<tr><td>$\arccos x$</td><td>$[0;\ \pi]$</td></tr>
+<tr><td>$\arctg x$</td><td>$\left(-\frac{\pi}{2};\ \frac{\pi}{2}\right)$</td></tr>
+<tr><td>$\arcctg x$</td><td>$(0;\ \pi)$</td></tr>
+</table></div>
+<p>$\arcsin(-x)=-\arcsin x$, $\ \arctg(-x)=-\arctg x$, но $\arccos(-x)=\pi-\arccos x$.</p>
+</section>

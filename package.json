@@ -1,0 +1,1 @@
+{"type":"module","private":true,"scripts":{"check":"node tools/check.mjs"},"devDependencies":{"katex":"^0.16.9"}}
